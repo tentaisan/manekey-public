@@ -1,0 +1,41 @@
+[package]
+name = "manekey-fips204-scratch"
+version = "0.0.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+description = "Experimental ML-DSA-44 scratch-workspace fork for ManeKey"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[lib]
+name = "manekey_fips204_scratch"
+path = "src/lib.rs"
+doctest = false
+
+[dependencies.rand_core]
+version = "0.6.4"
+default-features = false
+
+[dependencies.sha2]
+version = "0.10.8"
+default-features = false
+
+[dependencies.sha3]
+version = "0.10.2"
+default-features = false
+
+[dependencies.zeroize]
+version = "1.6.0"
+default-features = false
+features = ["zeroize_derive"]
+
+[features]
+default = ["default-rng", "ml-dsa-44"]
+default-rng = ["rand_core/getrandom"]
+ml-dsa-44 = []
+ml-dsa-65 = []
+ml-dsa-87 = []

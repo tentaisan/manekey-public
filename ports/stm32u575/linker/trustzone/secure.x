@@ -1,0 +1,8 @@
+MEMORY {
+  FLASH : ORIGIN = 0x0c000000, LENGTH = 1020K
+  NSC   : ORIGIN = 0x0c0ff000, LENGTH = 4K
+  RAM   : ORIGIN = 0x30000000, LENGTH = 256K
+}
+SECTIONS {
+  .nsc : ALIGN(32) { KEEP(*(.nsc)); } > NSC
+} INSERT BEFORE .vector_table;

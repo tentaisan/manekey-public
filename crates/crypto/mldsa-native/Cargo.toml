@@ -1,0 +1,24 @@
+[package]
+name = "manekey-mldsa-native"
+version = "0.0.0"
+edition = "2024"
+license = "Apache-2.0"
+publish = false
+description = "Experimental ManeKey ML-DSA-44 adapter for vendored mldsa-native"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[lib]
+name = "manekey_mldsa_native"
+path = "src/lib.rs"
+doctest = false
+
+[build-dependencies]
+cc = "1"
+
+[dependencies.zeroize]
+version = "1"
+default-features = false

@@ -1,0 +1,28 @@
+[package]
+name = "manekey-wasm"
+version = "0.1.0"
+edition = "2024"
+license = "AGPL-3.0-only"
+publish = false
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[workspace]
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+
+[profile.release]
+opt-level = 3
+debug = 2
+lto = "fat"
+codegen-units = 1
+panic = "abort"

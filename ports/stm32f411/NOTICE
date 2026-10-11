@@ -1,0 +1,12 @@
+License scope
+
+Original ManeKey port integration is licensed under AGPL-3.0-only.
+Separate commercial permission may be obtained from the relevant rights holder
+for original code. No such permission is granted by this notice.
+
+Upstream-derived code, vendor materials and dependencies retain their own
+licenses and copyright notices. The port package license does not relicense
+those materials or grant additional rights over MCU SDK or other dependencies.
+
+Permissions already granted under earlier licenses are not revoked.
+The choice of AGPL-3.0-only does not grant use under future AGPL versions.

@@ -1,0 +1,30 @@
+License scope and attribution
+
+This experimental fork derives from fips204 0.4.6. Original library code and
+ManeKey adaptations retain MIT OR Apache-2.0. See LICENSE-MIT and LICENSE-APACHE.
+Existing grants and upstream attribution are not revoked or replaced by a
+port package's license declaration.
+
+The upstream arithmetic helpers and high/low operations credit Dilithium in
+PQClean: https://github.com/PQClean/PQClean . Those source references are retained.
+This notice does not claim authorship of referenced third-party implementations.
+
+Arithmetic comparison reference: PQClean/PQClean revision
+a472dc1c482c7e4ea855b153001f064977f29135, Dilithium2/3 clean rounding.c
+and Dilithium2 clean reduce.c. Corresponding portions include power2round,
+decompose, use_hint, reduce32, conditional addition of Q and Montgomery reduction.
+The exact historical borrowing revision is not asserted. The clean directory's
+original license statement is retained below; it does not relicense other variants.
+
+Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
+
+For Keccak and AES we are using public-domain
+code from sources and by authors listed in
+comments on top of the respective files.
+
+The upstream ensure macro in src/helpers.rs credits Anyhow:
+https://github.com/dtolnay/anyhow . Anyhow offers MIT OR Apache-2.0; its unchanged
+MIT permission and disclaimer are retained separately in LICENSE-ANYHOW-MIT.
+That text does not assign Anyhow authorship or copyright to RustCrypto.
+
+Modifications to the imported library are identified in source notices.

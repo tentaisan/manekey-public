@@ -1,0 +1,36 @@
+License scope
+
+Original ManeKey port integration is licensed under AGPL-3.0-only.
+Separate commercial permission may be obtained from the relevant rights holder
+for original code. No such permission is granted by this notice.
+
+Upstream-derived code, vendor materials and dependencies retain their own
+licenses and copyright notices. The port package license does not relicense
+those materials or grant additional rights over MCU SDK or other dependencies.
+
+Permissions already granted under earlier licenses are not revoked.
+The choice of AGPL-3.0-only does not grant use under future AGPL versions.
+
+Secure RNG conditioning portions in src/secure_hal.rs are adapted from
+embassy-stm32/src/rng.rs, Embassy revision
+b12a6d9efcd2711037abca1b63a661a9ef726444, under Apache-2.0.
+Copyright (c) Embassy project contributors
+Modified for Secure register aliases, owned clocks and bounded waits.
+The Apache-2.0 license text is provided at ../../LICENSE-APACHE-2.0.
+
+Notices for Embassy
+
+This content is produced and maintained by the Embassy project contributors.
+
+Copyright
+
+All content is the property of the respective authors or their employers.
+For more information regarding authorship of content, please consult the
+listed source code repository logs.
+
+Declared Project Licenses
+
+This program and the accompanying materials are made available under the terms
+of the Apache Software License 2.0 which is available at
+https://www.apache.org/licenses/LICENSE-2.0, or the MIT license which is
+available at https://opensource.org/licenses/MIT

@@ -1,0 +1,11 @@
+License scope
+
+Original ManeKey Rust/C wrapper and build integration are licensed under
+Apache-2.0. See LICENSE-APACHE-2.0 for that license text.
+
+The vendored mldsa-native implementation retains its original
+Apache-2.0 OR ISC OR MIT licensing, copyright and SPDX notices. See
+upstream/LICENSE and the upstream source headers. The wrapper package license
+does not remove those alternative permissions or relicense upstream code.
+
+Permissions already granted under earlier licenses are not revoked.

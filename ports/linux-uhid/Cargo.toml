@@ -1,0 +1,29 @@
+[package]
+name = "manekey-linux-uhid"
+version = "0.1.0"
+edition = "2024"
+license = "AGPL-3.0-only"
+publish = false
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[workspace]
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+features = ["std"]
+
+[profile.release]
+opt-level = 3
+debug = 2
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+
+[[bin]]
+name = "uhid-fido"
+path = "src/bin/products/uhid_fido.rs"

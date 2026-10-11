@@ -1,0 +1,202 @@
+License scope
+
+Original ManeKey port integration is licensed under AGPL-3.0-only.
+Separate commercial permission may be obtained from the relevant rights holder
+for original code. No such permission is granted by this notice.
+
+Pre-existing rp-rs material retains its original licenses and attribution.
+LICENSE-LEGACY-MIT and LICENSE-LEGACY-APACHE-2.0 preserve the repository's
+existing license texts for that material; they do not grant additional
+permissions for all original ManeKey integration.
+
+Upstream-derived code, vendor materials, CYW43 firmware and other dependencies
+retain their own licenses and copyright notices. The port package license
+does not relicense those materials or grant extra redistribution rights.
+
+Permissions already granted under earlier licenses are not revoked.
+The choice of AGPL-3.0-only does not grant use under future AGPL versions.
+
+USB HID builder portions in src/bin/products/rp_usb_fido_common.rs and
+src/bin/products/trustzone/tz_nonsecure.rs follow the Embassy RP HID example,
+examples/rp/src/bin/usb_hid_mouse.rs. Comparison snapshot:
+0af1937a5ac77f52fea943b677088c38ef9e91c6, embassy-rs/embassy.
+Copyright (c) Embassy project contributors. Original portions retain
+MIT OR Apache-2.0 under root vendor/cyw43-portable/LICENSE-MIT and LICENSE-APACHE.
+Changes include static buffers, CTAPHID identity/report configuration,
+dispatcher/gateway integration and separate frontend tasks.
+The comparison snapshot does not identify the exact historical borrowing revision.
+
+The same USB HID builder attribution applies to the retained builder branch in
+src/bin/products/trustzone/tz_nonsecure_usb_ble.rs. Its gateway, ingress arbiter,
+bond conversion and transport-task integration are ManeKey changes; included
+shared BLE and USB implementations retain their separate original terms.
+
+CYW43 initialization and advertising in
+src/bin/products/ble/pico_cyw43_ble_common.rs and
+src/bin/products/ble/riscv_pico_2_w_ble_common.rs and
+src/bin/products/pmp/pmp_ble_user_image.rs follow TrouBLE examples.
+Comparison snapshot: b6043f576b482d8a4ecd7d2634df48cba20bd7ba,
+embassy-rs/trouble, examples/rp-pico-w/src/bin/ble_bas_peripheral.rs and
+examples/apps/src/ble_bas_peripheral.rs.
+Copyright (c) Embassy project contributors. Original portions retain
+MIT OR Apache-2.0 under root vendor/cyw43-portable/LICENSE-MIT and LICENSE-APACHE.
+Changes include FIDO services, shared ingress, stored bonds, notification
+handling and selectable PIO transport. The snapshot is a comparison reference,
+not a claim identifying the exact historical borrowing revision.
+The RISC-V variant changes HAL ownership, polling PIO setup, runtime selection
+and shared USB/Internal ingress; its PIO program retains the separate terms below.
+The split PMP user image changes descriptor-backed SPI, checked ecalls,
+shared ingress and monitor-owned timer handling. Its queue scheduling also
+follows Embassy embassy-rp/src/time_driver.rs at comparison snapshot
+0af1937a5ac77f52fea943b677088c38ef9e91c6, retaining the same included
+MIT OR Apache-2.0 terms and Embassy contributor attribution.
+
+Public source distributions do not include the NVRAM binary. Set
+MANEKEY_CYW43_NVRAM_FILE to an explicitly obtained file from
+https://raw.githubusercontent.com/embassy-rs/embassy/0af1937a5ac77f52fea943b677088c38ef9e91c6/cyw43-firmware/nvram_rp2040.bin
+The build verifies 742 bytes and SHA-256
+4904bdbb0c937bd0ac2eb2a1d62f2da4dd90e32082384e02874e8d671b0f330d.
+No automatic download or additional redistribution permission is granted.
+
+The NVRAM originates from the binary distributed by
+Embassy at revision 0af1937a5ac77f52fea943b677088c38ef9e91c6.
+Its upstream license text is included at
+assets/cyw43/LICENSE-permissive-binary-license-1.0.txt.
+The ManeKey port license does not replace that binary's terms.
+
+PIO programs in src/platform/rp2350/arm_cyw43_polling.rs and
+src/bin/products/pmp/pmp_user_pio.rs are derived from Embassy cyw43-pio at
+revision 0af1937a5ac77f52fea943b677088c38ef9e91c6, cyw43-pio/src/lib.rs.
+Copyright (c) Embassy project contributors.
+Original programs retain MIT OR Apache-2.0; included terms are at
+vendor/cyw43-portable/LICENSE-MIT and LICENSE-APACHE in the repository root.
+Changes include numeric branch targets, polling adapters and split-image setup.
+These terms do not relicense original ManeKey integration.
+
+Transfer setup and chip-select sequencing in
+src/platform/rp2350/riscv_cyw43_pio.rs follow Embassy cyw43-pio/src/lib.rs.
+Comparison snapshot: 0af1937a5ac77f52fea943b677088c38ef9e91c6, embassy-rs/embassy.
+Copyright (c) Embassy project contributors. Original portions retain
+MIT OR Apache-2.0 under root vendor/cyw43-portable/LICENSE-MIT and LICENSE-APACHE.
+Changes include rp235x-hal polling, split-image descriptor validation and
+separately owned DMA staging. This comparison does not identify the exact
+historical borrowing revision or relicense original ManeKey integration.
+
+Core1 startup portions of src/platform/rp/mailbox.rs are adapted from
+Embassy embassy-rp/src/multicore.rs at revision
+0af1937a5ac77f52fea943b677088c38ef9e91c6.
+Copyright (c) Embassy project contributors. Original portions retain
+MIT OR Apache-2.0 under the included vendor/cyw43-portable license texts.
+Changes include polling notifications, captured-entry stack placement and
+aligned stack bounds validation.
+
+TRNG initialization in src/platform/rp2350/entropy.rs references
+Embassy embassy-rp/src/trng.rs at revision
+0af1937a5ac77f52fea943b677088c38ef9e91c6.
+Copyright (c) Embassy project contributors. Original Embassy portions retain
+MIT OR Apache-2.0 under the included vendor/cyw43-portable license texts.
+The RISC-V adapter changes PAC access, retry bounds and error handling.
+Its sample-count setting references Embassy PR 6926, head
+2110f2c68105912f4881444ef3d062d14e719e19; this is not incorporation or
+qualification of that entire upstream change.
+
+Scheduling portions in src/platform/rp2350/riscv_embassy_time.rs follow
+Embassy embassy-rp/src/time_driver.rs, compared against reference snapshot
+0af1937a5ac77f52fea943b677088c38ef9e91c6.
+Copyright (c) Embassy project contributors. Original portions retain
+MIT OR Apache-2.0 under root vendor/cyw43-portable/LICENSE-MIT and LICENSE-APACHE.
+Changes include Hazard3 PAC access, critical-section state and machine IRQ routing.
+The reference snapshot does not establish the exact historical borrowing revision.
+
+The PIO programs above and in src/bin/products/ble/riscv_pico_2_w_ble_common.rs
+also retain their underlying Raspberry Pi Pico SDK terms. Reference source:
+raspberrypi/pico-sdk, src/rp2_common/pico_cyw43_driver/cyw43_bus_pio_spi.pio,
+comparison revision 079c6f39023649b154152db30f1d781e884879bc.
+Original portions are BSD-3-Clause; later Embassy and ManeKey changes do not
+replace the following original notice and terms.
+
+Copyright 2020 (c) 2020 Raspberry Pi (Trading) Ltd.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+   disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+   disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The Never helper in src/platform/rp/mailbox.rs is derived from
+bad-rs/src/never.rs at
+revision fdc623548d1a30c44feebfde745da929186201f9 (Unlicense OR MIT).
+Retained MIT terms:
+
+MIT License
+
+Copyright (c) 2019 Nikolai Vazquez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+USB endpoint and DPRAM portions in src/platform/rp2350/pmp_usb.rs are derived
+from rp-rs/rp-hal, rp235x-hal/src/usb.rs, compared against rp235x-hal 0.4.0 at
+fa430d279b8f185769fe2e5e9aca0e57290acd1f.
+Copyright (c) 2021-2024 The rp-rs Developers. Original portions retain
+MIT OR Apache-2.0 under LICENSE-LEGACY-MIT and LICENSE-LEGACY-APACHE-2.0.
+Changes include single-owner polling, preinitialized PMP hardware handoff,
+endpoint/DPRAM allocation bounds and adapted EP0 handling.
+The comparison snapshot does not establish the exact historical borrowing revision.
+The retained upstream MIT text below applies to these portions as well.
+
+The base layout in ports/rp2350/linker/riscv/runtime-pmp.x is derived from
+rp-rs/rp-hal, rp235x-hal-examples/rp235x_riscv.x at revision
+fa430d279b8f185769fe2e5e9aca0e57290acd1f.
+Original portions retain MIT OR Apache-2.0. ManeKey changes include PMP
+section islands, shared-memory alignment, media partitions and stack guards.
+Retained upstream MIT terms:
+
+Copyright (c) 2021-2024 The rp-rs Developers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

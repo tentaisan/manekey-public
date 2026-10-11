@@ -1,0 +1,10 @@
+MEMORY {
+  FLASH : ORIGIN = 0, LENGTH = 0x3f000
+  NSC : ORIGIN = 0x3f000, LENGTH = 0x1000
+  KMU_RAM : ORIGIN = 0x20000000, LENGTH = 256
+  RAM : ORIGIN = 0x20000100, LENGTH = 0x1ff00
+}
+SECTIONS {
+  .nsc : ALIGN(32) { KEEP(*(.nsc)); } > NSC
+} INSERT BEFORE .vector_table;
+INCLUDE kmu-product.x

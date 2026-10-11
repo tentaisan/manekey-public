@@ -1,0 +1,3 @@
+# Preserve upstream generated source byte-for-byte, including CRLF and spacing.
+*.c -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+*.h -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof

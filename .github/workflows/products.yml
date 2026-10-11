@@ -1,0 +1,333 @@
+name: Product builds
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      include_initialization:
+        description: Build separate empty-device initialization images
+        type: boolean
+        default: false
+      pico_draft:
+        description: Create a Pico-only draft prerelease after approved builds
+        type: boolean
+        default: false
+      pico2_draft:
+        description: Create a Pico 2 Arm draft prerelease after approved builds
+        type: boolean
+        default: false
+      draft_revision:
+        description: Positive RC revision for a new board draft (no overwrites)
+        type: number
+        default: 1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: product-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  firmware:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(inputs.pico2_draft && '[{"board":"pico2","variant":"runtime"},{"board":"pico2","variant":"runtime-mldsa44"}]' || inputs.pico_draft && '[{"board":"pico","variant":"runtime"},{"board":"pico","variant":"runtime-mldsa44"}]' || '[{"board":"pico","variant":"runtime"},{"board":"pico2","variant":"runtime"},{"board":"pico","variant":"runtime-mldsa44"},{"board":"pico2","variant":"runtime-mldsa44"}]') }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install Rust and converters
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libudev-dev pkg-config gcc-arm-none-eabi libnewlib-arm-none-eabi
+          rustup toolchain install 1.98.1 --profile minimal
+          rustup target add thumbv6m-none-eabi thumbv8m.main-none-eabihf --toolchain 1.98.1
+          cargo +1.98.1 install flip-link --version 0.1.11 --locked
+          cargo +1.98.1 install elf2uf2-rs --git https://github.com/JoNil/elf2uf2-rs.git --rev f14bf2d981772cd9fbe5bac33b685719caac1add --locked
+      - name: Build Physical UP firmware
+        env:
+          BOARD: ${{ matrix.board }}
+          VARIANT: ${{ matrix.variant }}
+        run: bash scripts/build-rp-release.sh "$BOARD" "$VARIANT"
+      - name: Build explicitly requested initialization image
+        if: github.event_name == 'workflow_dispatch' && inputs.include_initialization
+        env:
+          BOARD: ${{ matrix.board }}
+          VARIANT: ${{ matrix.variant }}
+        run: bash scripts/build-rp-release.sh "$BOARD" "${VARIANT/runtime/initialize}"
+      - name: Upload approved binary packages
+        if: github.event_name != 'pull_request' && ((matrix.board == 'pico' && vars.MANEKEY_PICO_BINARY_RELEASE_APPROVED == 'true') || (matrix.board == 'pico2' && vars.MANEKEY_PICO2_BINARY_RELEASE_APPROVED == 'true'))
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: product-${{ matrix.board }}-${{ matrix.variant }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+      - name: Explain distribution gate
+        if: (matrix.board == 'pico' && vars.MANEKEY_PICO_BINARY_RELEASE_APPROVED != 'true') || (matrix.board == 'pico2' && vars.MANEKEY_PICO2_BINARY_RELEASE_APPROVED != 'true')
+        run: echo 'Build completed; binary upload is disabled pending distribution approval.' >> "$GITHUB_STEP_SUMMARY"
+
+  host:
+    if: github.event_name != 'workflow_dispatch' || (!inputs.pico_draft && !inputs.pico2_draft)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        product: [linux-uhid, wasm]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Build host products
+        env:
+          PRODUCT: ${{ matrix.product }}
+        run: |
+          rustup toolchain install 1.98.1 --profile minimal
+          rustup target add wasm32-unknown-unknown --toolchain 1.98.1
+          bash scripts/build-host-release.sh "$PRODUCT"
+
+  port-checks:
+    if: github.event_name != 'workflow_dispatch' || (!inputs.pico_draft && !inputs.pico2_draft)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: esp32c3-uart
+            port: esp32c3
+            target: riscv32imc-unknown-none-elf
+            binary: esp32c3_internal_uart_fido
+            features: internal-uart,log-jtag-serial,shared-flash,client-pin-flash,flash-managed-keys
+          - name: esp32c5-pmp
+            port: esp32c5
+            target: riscv32imac-unknown-none-elf
+            binary: esp32c5_pmp_internal_uart_fido
+            features: pmp-internal-uart-fido,flash-managed-keys,log-jtag-serial
+          - name: esp32c6-pmp
+            port: esp32c6
+            target: riscv32imac-unknown-none-elf
+            binary: esp32c6_pmp_internal_uart_fido
+            features: pmp-internal-uart-fido,flash-managed-keys,log-jtag-serial
+          - name: ra4m1-xiao
+            port: ra4m1
+            target: thumbv7em-none-eabihf
+            binary: ra4m1_usb_fido
+            features: board-xiao,small-message-buffers,fido-product,internal-uart,usb-ccid,flash-managed-keys,physical-up
+          - name: ra4m1-nano
+            port: ra4m1
+            target: thumbv7em-none-eabihf
+            binary: ra4m1_usb_fido
+            features: board-nano-r4,small-message-buffers,fido-product,internal-uart,usb-ccid,flash-managed-keys,physical-up
+          - name: ra4m1-mpu
+            port: ra4m1
+            target: thumbv7em-none-eabihf
+            binary: ra4m1_mpu_internal
+            features: board-xiao,small-message-buffers,mpu-internal,mpu-usb-hid,mpu-usb-ccid,flash-managed-keys,physical-up
+          - name: stm32f411
+            port: stm32f411
+            target: thumbv7em-none-eabihf
+            binary: stm32f411_usb_fido
+            features: product-layout,experimental-adc-lsi-entropy,usb-ccid,flash-managed-keys,physical-up
+          - name: stm32f411-mpu
+            port: stm32f411
+            target: thumbv7em-none-eabihf
+            binary: stm32f411_mpu_internal
+            features: mpu-layout,experimental-adc-lsi-entropy,mpu-usb-hid,mpu-usb-ccid,flash-managed-keys,physical-up
+          - name: stm32u575
+            port: stm32u575
+            target: thumbv8m.main-none-eabihf
+            binary: stm32u575_usb_fido
+            features: usb-ccid,internal-uart,hal-time,hardware-sha256,flash-managed-keys,physical-up
+          - name: ch32v203
+            port: ch32v203
+            target: riscv32imc-unknown-none-elf
+            binary: ch32v203_multi_fido
+            features: fido-p256,experimental-adc-entropy,internal-uart,usb-ccid,flash-storage,storage-small,client-pin-flash,flash-managed-keys,up-gpio-pa0
+          - name: nrf52840-usb
+            port: nrf52840
+            target: thumbv7em-none-eabihf
+            binary: nrf52840_internal_usb_fido
+            features: nrf-usb-full-ram,nrf-internal-uart,nrf-usb-ccid,client-pin-flash-storage,nrf-flash-managed-keys
+          - name: nrf52840-mpu
+            port: nrf52840
+            target: thumbv7em-none-eabihf
+            binary: nrf52840_mpu_internal
+            features: nrf-mpu-product,nrf-flash-managed-keys
+          - name: nrf54l15-ble
+            port: nrf54l15
+            target: thumbv8m.main-none-eabihf
+            binary: nrf54l15_ble_fido
+            features: runtime,ble,ble-security,ble-notify-pacing,flash-managed-keys
+          - name: pico-w
+            port: rp
+            target: thumbv6m-none-eabi
+            binary: pico-w-multi-transport-fido
+            features: pico-w-multi-transport-board-ui-security-fido,rp-flash-managed-keys
+          - name: pico2-w
+            port: rp
+            target: thumbv8m.main-none-eabihf
+            binary: pico-2-w-multi-transport-fido
+            features: pico-2-w-multi-transport-board-ui-fido,pico-ble-bond-flash,rp2350-flash-managed-keys
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install target tools
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y gcc-arm-none-eabi libnewlib-arm-none-eabi clang libclang-dev
+          rustup toolchain install 1.98.1 --profile minimal
+          rustup target add "$TARGET" --toolchain 1.98.1
+          cargo +1.98.1 install flip-link --version 0.1.11 --locked
+      - name: Obtain explicit wireless build input
+        if: matrix.name == 'pico-w' || matrix.name == 'pico2-w'
+        run: |
+          curl --fail --location https://raw.githubusercontent.com/embassy-rs/embassy/0af1937a5ac77f52fea943b677088c38ef9e91c6/cyw43-firmware/nvram_rp2040.bin --output "$RUNNER_TEMP/nvram.bin"
+          printf '%s  %s\n' 4904bdbb0c937bd0ac2eb2a1d62f2da4dd90e32082384e02874e8d671b0f330d "$RUNNER_TEMP/nvram.bin" | sha256sum --check
+          echo "MANEKEY_CYW43_NVRAM_FILE=$RUNNER_TEMP/nvram.bin" >> "$GITHUB_ENV"
+      - name: Link selected product
+        working-directory: ports/${{ matrix.port }}
+        env:
+          TARGET: ${{ matrix.target }}
+          BINARY: ${{ matrix.binary }}
+          FEATURES: ${{ matrix.features }}
+        run: |
+          unset LIBCLANG_PATH
+          cargo +1.98.1 build --release --locked --no-default-features --target "$TARGET" --bin "$BINARY" --features "$FEATURES"
+
+  xtensa-checks:
+    if: github.event_name != 'workflow_dispatch' || (!inputs.pico_draft && !inputs.pico2_draft)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - port: esp32
+            target: xtensa-esp32-none-elf
+            binary: esp32_ble_internal_uart_fido
+            features: managed-internal-uart
+          - port: esp32s2
+            target: xtensa-esp32s2-none-elf
+            binary: esp32s2_usb_fido
+            features: usb-hid,internal-uart,flash-managed-keys,client-pin-flash,log-uart
+          - port: esp32s3
+            target: xtensa-esp32s3-none-elf
+            binary: esp32s3_usb_ble_fido
+            features: internal-uart,usb-ble-multi,board-ui,log-jtag-serial,usb-ccid-experimental,flash-managed-keys
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned Espressif toolchain
+        env:
+          CHIP: ${{ matrix.port }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          rustup toolchain install 1.98.1 --profile minimal
+          curl --fail --location --retry 3 https://github.com/esp-rs/espup/releases/download/v0.17.1/espup-x86_64-unknown-linux-gnu --output "$RUNNER_TEMP/espup"
+          printf '%s  %s\n' dbe54e9907b687809dbe1b955731569ed6df2b525362710d676256c5c8cf9ccd "$RUNNER_TEMP/espup" | sha256sum --check
+          chmod +x "$RUNNER_TEMP/espup"
+          "$RUNNER_TEMP/espup" install --toolchain-version 1.97.0.0 --stable-version 1.98.1 --targets "$CHIP"
+      - name: Link selected Xtensa product
+        working-directory: ports/${{ matrix.port }}
+        env:
+          TARGET: ${{ matrix.target }}
+          BINARY: ${{ matrix.binary }}
+          FEATURES: ${{ matrix.features }}
+        run: |
+          source "$HOME/export-esp.sh"
+          cargo +esp build --release --locked --no-default-features --target "$TARGET" --bin "$BINARY" --features "$FEATURES"
+
+  draft-release:
+    if: startsWith(github.ref, 'refs/tags/v') && vars.MANEKEY_PICO_BINARY_RELEASE_APPROVED == 'true' && vars.MANEKEY_PICO2_BINARY_RELEASE_APPROVED == 'true'
+    needs: [firmware, host, port-checks, xtensa-checks]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: product-*
+          merge-multiple: true
+          path: dist
+      - name: Validate tag and create draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os, re, tomllib
+          tag = os.environ["RELEASE_TAG"]
+          match = re.fullmatch(r"v(\d+\.\d+\.\d+)(?:-(?:rc|alpha|beta)\.\d+)?", tag)
+          if not match:
+              raise SystemExit("Invalid release tag")
+          with open("Cargo.toml", "rb") as source:
+              version = tomllib.load(source)["package"]["version"]
+          if match[1] != version:
+              raise SystemExit("Tag does not match the package version")
+          PY
+          test -f dist/manekey-pico-runtime.tar.gz
+          test -f dist/manekey-pico2-runtime.tar.gz
+          test -f dist/manekey-pico-runtime-mldsa44.tar.gz
+          test -f dist/manekey-pico2-runtime-mldsa44.tar.gz
+          test "$(find dist -maxdepth 1 -name '*.tar.gz' | wc -l)" -eq 4
+          (cd dist && sha256sum ./*.tar.gz > SHA256SUMS)
+          git archive --format=tar.gz --output=dist/manekey-source.tar.gz HEAD
+          (cd dist && sha256sum manekey-source.tar.gz >> SHA256SUMS)
+          args=(--draft --verify-tag --title "$RELEASE_TAG" --notes "Experimental Physical UP firmware. See the RP README for board selection, provisioning and limitations.")
+          if [[ "$RELEASE_TAG" == *-* ]]; then args+=(--prerelease); fi
+          gh release create "$RELEASE_TAG" dist/*.tar.gz dist/SHA256SUMS "${args[@]}"
+
+  rp-draft:
+    if: github.event_name == 'workflow_dispatch' && inputs.include_initialization && ((inputs.pico_draft && !inputs.pico2_draft && vars.MANEKEY_PICO_BINARY_RELEASE_APPROVED == 'true') || (inputs.pico2_draft && !inputs.pico_draft && vars.MANEKEY_PICO2_BINARY_RELEASE_APPROVED == 'true'))
+    needs: [firmware]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: product-${{ inputs.pico2_draft && 'pico2' || 'pico' }}-*
+          merge-multiple: true
+          path: dist
+      - name: Create selected RP board draft prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_REVISION: ${{ github.sha }}
+          BOARD: ${{ inputs.pico2_draft && 'pico2' || 'pico' }}
+          DRAFT_REVISION: ${{ inputs.draft_revision }}
+        run: |
+          [[ "$DRAFT_REVISION" =~ ^[1-9][0-9]*$ ]]
+          version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"))["package"]["version"])')
+          for variant in runtime initialize runtime-mldsa44 initialize-mldsa44; do
+            test -f "dist/manekey-$BOARD-$variant.tar.gz"
+          done
+          test "$(find dist -maxdepth 1 -name '*.tar.gz' | wc -l)" -eq 4
+          (cd dist && sha256sum ./*.tar.gz > SHA256SUMS)
+          gh release create "$BOARD-v$version-rc.$DRAFT_REVISION" dist/*.tar.gz dist/SHA256SUMS \
+            --target "$SOURCE_REVISION" --draft --prerelease \
+            --title "$BOARD $version RC$DRAFT_REVISION" \
+            --notes "Experimental firmware for $BOARD only (not W). Each package includes matching project/dependency source and legal notices. Runtime requires a compatible managed root; initialization is for deliberately provisioning empty credential storage. BOOTSEL and the green LED provide Physical UP. No security guarantee; prolonged, high-load and interrupted-write testing remains pending. See ports/rp/README.md in the included source."

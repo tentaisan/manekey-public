@@ -1,0 +1,7 @@
+nvs,data,nvs,0x9000,0x6000
+phy_init,data,phy,0xf000,0x1000
+factory,app,factory,0x10000,0x100000
+key-assets,data,nvs,0x1f9000,0x2000
+manekey_pin,data,undefined,0x1fb000,0x2000
+manekey-bond,data,undefined,0x1fd000,0x1000
+manekey,data,undefined,0x1fe000,0x2000

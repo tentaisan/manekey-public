@@ -1,0 +1,96 @@
+[package]
+name = "manekey-stm32f411"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[dependencies]
+cortex-m-rt = "0.7.5"
+static_cell = "2"
+critical-section = "1"
+
+[dependencies.cortex-m]
+version = "0.7.7"
+features = ["critical-section-single-core"]
+
+[dependencies.embassy-stm32]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["stm32f411re", "time-driver-tim2", "unstable-pac", "exti"]
+
+[dependencies.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["platform-cortex-m", "executor-thread"]
+
+[dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["tick-hz-32_768"]
+
+[dependencies.embassy-usb]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[dependencies.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[dependencies.sha2]
+version = "0.11"
+default-features = false
+
+[dependencies.manekey-fips204-scratch]
+path = "../../crates/crypto/fips204-scratch"
+default-features = false
+features = ["ml-dsa-44"]
+optional = true
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+features = ["embassy-usb-transport", "up-always-present", "key-storage-derived", "pin-storage-volatile"]
+
+[features]
+default = []
+experimental-adc-lsi-entropy = []
+product-layout = []
+usb-ccid = []
+physical-up = []
+dual-task = []
+flash-managed-keys = ["product-layout"]
+flash-managed-key-setup = ["flash-managed-keys"]
+ml-dsa-fips204 = ["manekey/trusted-boundary-ml-dsa-fips204-experimental"]
+ml-dsa-native = ["manekey/trusted-boundary-ml-dsa-mldsa-native-experimental"]
+ml-dsa-scratch = ["manekey/experimental-large-message-buffers", "manekey/experimental-ml-dsa-fips204-scratch", "dep:manekey-fips204-scratch"]
+mpu-layout = ["product-layout"]
+mpu-usb-hid = ["embassy-time/generic-queue-8", "manekey/privileged-usb-pump"]
+mpu-usb-ccid = ["mpu-usb-hid", "usb-ccid", "manekey/privileged-usb-ccid"]
+
+[profile.release]
+opt-level = "s"
+debug = 2
+lto = true
+codegen-units = 1
+
+[[bin]]
+name = "stm32f411_usb_fido"
+path = "src/bin/products/stm32f411_usb_fido.rs"
+required-features = ["product-layout", "experimental-adc-lsi-entropy"]
+
+[[bin]]
+name = "stm32f411_mpu_internal"
+path = "src/bin/products/stm32f411_mpu_internal.rs"
+required-features = ["mpu-layout", "experimental-adc-lsi-entropy"]
+
+[workspace]

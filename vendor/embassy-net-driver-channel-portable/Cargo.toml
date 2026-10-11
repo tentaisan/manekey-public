@@ -1,0 +1,41 @@
+# Modified for standalone dependencies instead of upstream workspace paths.
+# Source: https://github.com/embassy-rs/embassy/tree/0af1937a5ac77f52fea943b677088c38ef9e91c6/embassy-net-driver-channel
+[package]
+name = "embassy-net-driver-channel"
+version = "0.4.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "High-level channel-based driver for the `embassy-net` async TCP/IP network stack."
+repository = "https://github.com/embassy-rs/embassy"
+categories = ["embedded", "no-std", "asynchronous"]
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[package.metadata.embassy_docs]
+src_base = "https://github.com/embassy-rs/embassy/blob/embassy-net-driver-channel-v$VERSION/embassy-net-driver-channel/src/"
+src_base_git = "https://github.com/embassy-rs/embassy/blob/$COMMIT/embassy-net-driver-channel/src/"
+features = ["defmt"]
+target = "thumbv7em-none-eabi"
+
+[package.metadata.docs.rs]
+features = ["defmt"]
+
+[dependencies]
+embassy-sync = "0.8.0"
+embassy-futures = "0.1.2"
+embassy-net-driver = "0.2.0"
+
+[dependencies.defmt]
+version = "1.0.1"
+optional = true
+
+[dependencies.log]
+version = "0.4.14"
+optional = true
+
+[features]
+defmt = ["dep:defmt"]
+log = ["dep:log"]

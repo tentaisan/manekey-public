@@ -1,0 +1,15 @@
+License scope
+
+Original ManeKey port integration is licensed under AGPL-3.0-only.
+The designated original portions have the additional permission in
+../../LICENSE-NORDIC-LINKING-EXCEPTION, subject to its exact scope.
+Separate commercial permission may be obtained from the relevant rights holder
+for original code. No such permission is granted by this notice.
+
+Vendor, upstream-derived code and dependencies retain their own licenses and
+copyright notices. The port package license does not relicense those materials.
+In particular, vendor/nordic-cracen retains its accompanying Nordic license;
+MPSL, SoftDevice Controller and other dependencies retain their original terms.
+
+Permissions already granted under earlier licenses are not revoked.
+The choice of AGPL-3.0-only does not grant use under future AGPL versions.

@@ -1,0 +1,13 @@
+License scope
+
+Original ManeKey common code uses Apache-2.0, as identified by its package
+metadata and source notices. Original port integration uses AGPL-3.0-only;
+separate commercial permission may be obtained for code owned by the licensor.
+No commercial permission is granted by this notice.
+
+Upstream-derived code, vendor material and dependencies retain their original
+licenses and copyright notices. Package declarations do not relicense them.
+
+The existing rp-rs MIT and Apache-2.0 texts and attribution are retained for
+legacy/upstream material. Their presence does not apply MIT to all new code.
+Permissions already granted under earlier licenses are not revoked.

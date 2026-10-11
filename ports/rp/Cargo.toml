@@ -1,0 +1,461 @@
+[package]
+name = "manekey-rp"
+version = "0.1.0"
+edition = "2024"
+license = "AGPL-3.0-only"
+publish = false
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[features]
+default = []
+rp-usb-fido = []
+embassy-rp-rt = ["embassy-rp/rt"]
+chip-rp2040 = ["rp-usb-fido", "manekey/chip-rp2040", "manekey/defmt-log", "embassy-rp/rp2040", "embassy-rp-rt", "dep:rp-pac", "rp-pac/rp2040"]
+chip-rp235xa = ["rp-usb-fido", "manekey/chip-rp235xa", "manekey/defmt-log", "embassy-rp/imagedef-none", "embassy-rp/rp235xa", "embassy-rp-rt", "dep:rp-pac", "rp-pac/rp235x"]
+chip-rp235xa-nonsecure = ["manekey/chip-rp235xa-nonsecure", "embassy-rp/imagedef-none", "embassy-rp/rp235xa", "dep:rp-pac", "rp-pac/rp235x", "rp-pac/rt"]
+up-gpio15 = ["manekey/up-gpio15"]
+up-always-present = ["manekey/up-always-present"]
+up-bootsel-experimental = ["manekey/up-bootsel-experimental"]
+board-ui-experimental = ["manekey/board-ui-experimental"]
+usb-ccid-experimental = []
+rp-internal-uart = []
+rp2040-mpu-product = ["chip-rp2040", "pin-storage-flash", "usb-ccid-experimental", "manekey/privileged-usb-ccid", "embassy-time/generic-queue-8"]
+rp2040-mpu-ble = ["rp2040-mpu-product", "cyw43-ble", "pico-ble-bond-flash", "pico-ble-bonded-only", "manekey/privileged-ble-frontend"]
+trustzone-multi-ingress-nonsecure = ["trustzone-nonsecure-image", "rp-internal-uart", "embassy-rp/rt"]
+key-storage-flash = ["manekey/key-storage-flash"]
+pin-storage-flash = ["manekey/pin-storage-flash"]
+pin-storage-volatile = ["manekey/pin-storage-volatile"]
+uv-always-verified = ["manekey/uv-always-verified"]
+dual-core-transport = ["manekey/dual-core-transport", "dep:trusted-boundary"]
+dual-core-rp2350 = ["chip-rp235xa"]
+dual-core-core0-flash-service = ["dual-core-transport", "manekey/dual-core-core0-flash-service"]
+single-core-task-transport = ["manekey/single-core-task-transport"]
+rp2350-sha256-accelerator = ["chip-rp235xa"]
+trustzone-secure-layout = ["manekey/trustzone-secure-layout"]
+trustzone-nonsecure-image = ["chip-rp235xa-nonsecure", "manekey/trustzone-nonsecure-image"]
+trustzone-handoff = ["trustzone-secure-layout", "manekey/trustzone-handoff"]
+trustzone-product-runtime = ["trustzone-handoff", "dep:trusted-boundary"]
+trustzone-usb-ble-secure-experimental = ["trustzone-product-runtime"]
+rp2350-cyw43-polling = []
+trustzone-cyw43-ui = []
+trustzone-usb-ble-nonsecure-experimental = ["trustzone-nonsecure-image", "manekey/defmt-log", "cyw43-ble", "pico-ble-security", "experimental-large-message-buffers"]
+tz-ble-bonded-only = ["trustzone-usb-ble-nonsecure-experimental"]
+rp-ml-dsa-credential-experimental = ["experimental-large-message-buffers", "manekey/rp-ml-dsa-credential-experimental"]
+rp2350-ml-dsa-credential-experimental = ["rp-ml-dsa-credential-experimental", "chip-rp235xa"]
+rp2040-ml-dsa-credential-experimental = ["rp-ml-dsa-credential-experimental", "chip-rp2040"]
+experimental-ml-dsa-rustcrypto = ["dep:embedded-alloc", "manekey/experimental-ml-dsa-rustcrypto"]
+experimental-ml-dsa-alloc = ["experimental-ml-dsa-rustcrypto", "manekey/experimental-ml-dsa-alloc"]
+experimental-ml-dsa-fips204 = ["manekey/experimental-ml-dsa-fips204"]
+experimental-ml-dsa-fips204-scratch = ["manekey/experimental-ml-dsa-fips204-scratch", "dep:manekey-fips204-scratch"]
+experimental-ml-dsa-mldsa-native = ["manekey/experimental-ml-dsa-mldsa-native"]
+riscv-client-pin-sha256 = ["riscv-rp2350-hal"]
+riscv-flash-managed-keys = ["riscv-rp2350-hal"]
+riscv-flash-managed-key-setup = ["riscv-flash-managed-keys"]
+rp2350-managed-flash-layout = ["manekey/rp2350-managed-flash-layout"]
+rp-flash-managed-keys = []
+rp-flash-managed-key-setup = ["rp-flash-managed-keys"]
+rp2040-flash-managed-key-setup = ["chip-rp2040", "rp-flash-managed-key-setup"]
+rp2350-flash-managed-keys = ["rp-flash-managed-keys", "rp2350-managed-flash-layout"]
+rp2350-flash-managed-key-setup = ["rp2350-flash-managed-keys", "rp-flash-managed-key-setup"]
+experimental-large-message-buffers = ["manekey/experimental-large-message-buffers"]
+rp2350-ml-dsa-experimental = ["rp2350-ml-dsa-credential-experimental", "experimental-ml-dsa-rustcrypto", "manekey/rp2350-ml-dsa-experimental"]
+rp2350-ml-dsa-fips204-experimental = ["rp2350-ml-dsa-credential-experimental", "experimental-ml-dsa-fips204", "manekey/rp2350-ml-dsa-fips204-experimental"]
+rp2040-ml-dsa-fips204-experimental = ["rp2040-ml-dsa-credential-experimental", "experimental-ml-dsa-fips204"]
+trusted-boundary-ml-dsa-fips204-experimental = ["experimental-large-message-buffers", "experimental-ml-dsa-fips204", "manekey/trusted-boundary-ml-dsa-fips204-experimental"]
+pico-2-w-usb-ml-dsa-fido = ["chip-rp235xa", "up-gpio15", "pin-storage-flash", "rp2350-ml-dsa-experimental"]
+pico-2-w-usb-ml-dsa-fips204-fido = ["chip-rp235xa", "up-gpio15", "pin-storage-flash", "rp2350-ml-dsa-fips204-experimental"]
+pico-usb-ml-dsa-fips204-fido = ["chip-rp2040", "up-bootsel-experimental", "board-ui-experimental", "key-storage-flash", "pin-storage-flash", "rp2040-ml-dsa-fips204-experimental"]
+pico-usb-dual-task-board-ui-fido = ["chip-rp2040", "up-bootsel-experimental", "board-ui-experimental", "key-storage-flash", "pin-storage-flash", "single-core-task-transport"]
+pico-usb-dual-core-board-ui-fido = ["chip-rp2040", "up-bootsel-experimental", "board-ui-experimental", "key-storage-flash", "pin-storage-flash", "dual-core-core0-flash-service"]
+pico-usb-dual-core-ml-dsa-fips204-fido = ["pico-usb-dual-core-board-ui-fido", "rp2040-ml-dsa-fips204-experimental", "rp2040-dual-core-core1-stack-160k-experimental"]
+pico-usb-ccid-board-ui-fido = ["chip-rp2040", "up-bootsel-experimental", "board-ui-experimental", "key-storage-flash", "pin-storage-flash", "usb-ccid-experimental"]
+pico-usb-ccid-ml-dsa-fips204-fido = ["pico-usb-ccid-board-ui-fido", "rp2040-ml-dsa-fips204-experimental"]
+pico-usb-ccid-dual-task-board-ui-fido = ["pico-usb-ccid-board-ui-fido", "single-core-task-transport"]
+pico-usb-ccid-dual-core-board-ui-fido = ["pico-usb-ccid-board-ui-fido", "dual-core-core0-flash-service"]
+pico-usb-ccid-dual-task-ml-dsa-fips204-fido = ["pico-usb-ccid-dual-task-board-ui-fido", "rp2040-ml-dsa-fips204-experimental"]
+pico-usb-ccid-dual-core-ml-dsa-fips204-fido = ["pico-usb-ccid-dual-core-board-ui-fido", "rp2040-ml-dsa-fips204-experimental"]
+rp2040-dual-core-core1-stack-160k-experimental = []
+rp2040-dual-core-stack-160k-experimental = ["rp2040-dual-core-core1-stack-160k-experimental"]
+pico-2-w-usb-dual-core-ml-dsa-fips204-fido = ["chip-rp235xa", "up-gpio15", "dual-core-core0-flash-service", "rp2350-ml-dsa-fips204-experimental"]
+pico-2-usb-dual-core-bootsel-ml-dsa-fips204-fido = ["chip-rp235xa", "up-bootsel-experimental", "board-ui-experimental", "key-storage-flash", "pin-storage-flash", "dual-core-core0-flash-service", "rp2350-ml-dsa-fips204-experimental"]
+cyw43-ble = ["dep:cyw43", "dep:cyw43-firmware", "dep:cyw43-pio", "dep:trouble-host", "cyw43/bluetooth", "cyw43/defmt", "cyw43-firmware/bluetooth", "cyw43-firmware/wifi", "cyw43-pio/defmt", "trouble-host/default-packet-pool-mtu-128", "trouble-host/defmt"]
+pico-ble-security = ["cyw43-ble", "trouble-host/central", "trouble-host/security"]
+pico-ble-bond-flash = ["pico-ble-security"]
+pico-ble-bonded-only = ["pico-ble-bond-flash"]
+pico-w-ble-runtime = ["chip-rp2040", "cyw43-ble"]
+pico-2-w-ble-runtime = ["chip-rp235xa", "cyw43-ble"]
+pico-w-ble-fido = ["pico-w-ble-runtime", "pin-storage-flash", "up-gpio15"]
+pico-w-ml-dsa-fips204 = ["experimental-large-message-buffers", "experimental-ml-dsa-fips204", "manekey/trusted-no-private-request-copy"]
+pico-w-ble-ml-dsa-fips204-fido = ["pico-w-ble-fido", "pico-w-ml-dsa-fips204"]
+pico-w-ble-ml-dsa-fips204-bootsel-board-ui-fido = ["pico-w-ble-bootsel-board-ui-fido", "pico-w-ml-dsa-fips204"]
+pico-w-ble-bootsel-board-ui-fido = ["pico-w-ble-runtime", "pin-storage-flash", "up-bootsel-experimental", "board-ui-experimental"]
+pico-2-w-ble-fido = ["pico-2-w-ble-runtime", "pin-storage-flash", "up-gpio15"]
+pico-2-w-ble-ml-dsa-fido = ["pico-2-w-ble-fido", "rp2350-ml-dsa-experimental"]
+pico-2-w-ble-ml-dsa-fips204-fido = ["pico-2-w-ble-fido", "rp2350-ml-dsa-fips204-experimental"]
+pico-w-ble-single-task-fido = ["pico-w-ble-runtime", "single-core-task-transport", "pin-storage-flash", "up-gpio15"]
+pico-w-ble-single-task-bootsel-board-ui-fido = ["pico-w-ble-runtime", "single-core-task-transport", "pin-storage-flash", "up-bootsel-experimental", "board-ui-experimental"]
+pico-2-w-ble-single-task-fido = ["pico-2-w-ble-runtime", "single-core-task-transport", "pin-storage-flash", "up-gpio15"]
+pico-2-w-ble-single-task-ml-dsa-fido = ["pico-2-w-ble-single-task-fido", "rp2350-ml-dsa-experimental"]
+pico-w-ble-dual-core-fido = ["pico-w-ble-runtime", "dual-core-transport", "pin-storage-flash", "up-gpio15"]
+pico-w-ble-dual-core-bootsel-board-ui-fido = ["pico-w-ble-runtime", "dual-core-transport", "pin-storage-flash", "up-bootsel-experimental", "board-ui-experimental"]
+pico-w-multi-transport-fido = ["pico-w-ble-runtime"]
+pico-w-multi-transport-board-ui-fido = ["pico-w-multi-transport-fido", "up-bootsel-experimental", "pin-storage-flash", "board-ui-experimental"]
+pico-w-multi-transport-board-ui-security-fido = ["pico-w-multi-transport-board-ui-fido", "pico-ble-bond-flash"]
+pico-w-multi-transport-board-ui-bonded-only-fido = ["pico-w-multi-transport-board-ui-fido", "pico-ble-bonded-only"]
+pico-2-w-ble-dual-core-base = ["pico-2-w-ble-runtime", "dual-core-transport", "pin-storage-flash"]
+pico-2-w-ble-dual-core-fido = ["pico-2-w-ble-dual-core-base", "up-gpio15"]
+pico-2-w-ble-dual-core-ml-dsa-fips204-base = ["pico-2-w-ble-dual-core-base", "rp2350-ml-dsa-fips204-experimental"]
+pico-2-w-ble-dual-core-ml-dsa-fips204-fido = ["pico-2-w-ble-dual-core-ml-dsa-fips204-base", "up-gpio15"]
+pico-2-w-ble-dual-core-ml-dsa-fips204-bootsel-fido = ["pico-2-w-ble-dual-core-ml-dsa-fips204-base", "up-bootsel-experimental", "board-ui-experimental"]
+pico-2-w-ble-dual-core-ml-dsa-fips204-always-present-fido = ["pico-2-w-ble-dual-core-ml-dsa-fips204-base", "up-always-present"]
+pico-2-w-multi-transport-fido = ["pico-2-w-ble-runtime"]
+pico-2-w-multi-transport-always-present-fido = ["pico-2-w-multi-transport-fido", "up-always-present"]
+pico-2-w-multi-transport-gpio-up-fido = ["pico-2-w-multi-transport-fido", "up-gpio15"]
+pico-2-w-multi-transport-persistent-fido = ["pico-2-w-multi-transport-fido", "up-gpio15", "pin-storage-flash"]
+pico-2-w-multi-transport-board-ui-fido = ["pico-2-w-multi-transport-fido", "up-bootsel-experimental", "pin-storage-flash", "board-ui-experimental"]
+pico-2-w-multi-transport-ccid-fido = ["pico-2-w-multi-transport-board-ui-fido", "usb-ccid-experimental"]
+pico-2-w-multi-transport-ccid-ml-dsa-fips204-fido = ["pico-2-w-multi-transport-ccid-fido", "rp2350-ml-dsa-fips204-experimental"]
+pico-2-w-multi-transport-ml-dsa-fips204-fido = ["pico-2-w-multi-transport-persistent-fido", "rp2350-ml-dsa-fips204-experimental"]
+riscv-rp2350-hal = ["manekey/riscv-rp2350-hal", "rp235x-hal/critical-section-impl", "rp235x-hal/rt"]
+riscv-cyw43-backend-experimental = ["riscv-rp2350-hal", "dep:cyw43-riscv", "dep:pio"]
+riscv-embassy-time-experimental = ["riscv-rp2350-hal", "dep:critical-section", "dep:embassy-executor", "dep:embassy-time", "dep:embassy-time-driver", "dep:embassy-time-queue-utils"]
+riscv-pico-2-w-ble-runtime = ["riscv-cyw43-backend-experimental", "riscv-embassy-time-experimental", "dep:cyw43-firmware-riscv", "dep:embassy-futures", "dep:trouble-host", "cyw43-riscv/bluetooth", "cyw43-firmware-riscv/bluetooth", "cyw43-firmware-riscv/wifi", "trouble-host/default-packet-pool-mtu-128"]
+riscv-pico-2-w-ble-gatt = ["riscv-pico-2-w-ble-runtime", "dep:heapless", "trouble-host/derive", "trouble-host/gatt"]
+riscv-pico-2-w-ble-security = ["riscv-pico-2-w-ble-gatt", "trouble-host/central", "trouble-host/security"]
+riscv-bootsel-presence = ["up-bootsel-experimental"]
+riscv-pico-2-w-ble-bootsel = ["riscv-dual-core-bootsel"]
+riscv-pico-2-w-ble-ml-dsa-fips204-experimental = ["experimental-large-message-buffers", "experimental-ml-dsa-fips204"]
+riscv-pico-2-w-ble-multi-transport = []
+riscv-pico-2-w-internal-uart = ["riscv-pico-2-w-ble-multi-transport"]
+riscv-pico-2-w-ccid = ["riscv-pico-2-w-ble-multi-transport", "manekey/usb-device-transport"]
+riscv-pico-2-w-ble-bonded-only = ["riscv-pico-2-w-ble-security"]
+riscv-pico-2-w-ble-bond-flash = ["riscv-pico-2-w-ble-security"]
+riscv-pico-2-w-ble-dual-core-bond-flash = ["riscv-pico-2-w-ble-security"]
+riscv-pico-2-w-ble-fido-base = ["riscv-pico-2-w-ble-gatt", "key-storage-flash", "pin-storage-flash"]
+riscv-pico-2-w-ble-fido = ["riscv-pico-2-w-ble-fido-base"]
+riscv-pico-2-w-ble-single-task-fido = ["riscv-pico-2-w-ble-fido-base", "single-core-task-transport"]
+riscv-pico-2-w-ble-dual-core-fido = ["riscv-pico-2-w-ble-fido-base", "riscv-dual-core-flash", "riscv-dual-core-trng"]
+riscv-single-core = ["riscv-rp2350-hal"]
+riscv-single-core-task-transport = ["riscv-single-core"]
+riscv-usb-internal-ccid = ["riscv-single-core", "manekey/usb-device-transport"]
+riscv-single-core-ml-dsa-fips204-experimental = ["riscv-single-core", "experimental-large-message-buffers", "experimental-ml-dsa-fips204", "manekey/trusted-no-private-request-copy"]
+riscv-dual-core-runtime = ["riscv-rp2350-hal"]
+riscv-dual-core-trng = ["riscv-dual-core-runtime"]
+riscv-dual-core-flash = ["riscv-dual-core-runtime"]
+riscv-dual-core-bootsel = ["riscv-dual-core-runtime", "riscv-bootsel-presence"]
+riscv-dual-core-internal-ccid = ["riscv-dual-core-ml-dsa-fips204-experimental", "manekey/usb-device-transport"]
+riscv-dual-core-ml-dsa-fips204-experimental = ["riscv-dual-core-flash", "riscv-dual-core-trng", "experimental-large-message-buffers", "experimental-ml-dsa-fips204"]
+riscv-pmp-runtime = ["riscv-rp2350-hal", "dep:trusted-boundary"]
+riscv-pmp-ble-mmio-runtime = ["riscv-pmp-runtime", "riscv-cyw43-backend-experimental", "riscv-embassy-time-experimental", "manekey/riscv-ecall-backend"]
+riscv-pmp-ble-monitor-image = ["riscv-pmp-ble-mmio-runtime"]
+riscv-pmp-ble-monitor-handoff-only = ["riscv-pmp-ble-monitor-image"]
+riscv-pmp-ble-monitor-flash-storage = ["riscv-pmp-ble-monitor-handoff-only", "riscv-pmp-trusted-flash-storage"]
+riscv-pmp-ble-monitor-bond-storage = ["riscv-pmp-ble-monitor-flash-storage"]
+riscv-pmp-ble-monitor-frontend-io = ["riscv-pmp-ble-monitor-multi-transport-persistent-security-ml-dsa-fips204-experimental"]
+riscv-pmp-ble-monitor-pin-uv = ["riscv-pmp-ble-monitor-flash-storage", "riscv-pmp-trusted-pin-uv", "riscv-pmp-trusted-gpio15-presence"]
+riscv-pmp-ble-monitor-pin-uv-bootsel = ["riscv-pmp-ble-monitor-flash-storage", "riscv-pmp-trusted-pin-uv", "riscv-pmp-trusted-bootsel-presence"]
+riscv-pmp-ble-monitor-pin-uv-bootsel-ml-dsa-fips204-experimental = ["riscv-pmp-ble-monitor-pin-uv-bootsel", "riscv-pmp-ble-monitor-ml-dsa-layout", "riscv-pmp-trusted-ml-dsa-fips204-experimental"]
+riscv-pmp-ble-monitor-multi-transport-ml-dsa-fips204-experimental = ["riscv-pmp-ble-monitor-pin-uv-bootsel-ml-dsa-fips204-experimental"]
+riscv-pmp-ble-monitor-multi-transport-persistent-security-ml-dsa-fips204-experimental = ["riscv-pmp-ble-monitor-multi-transport-ml-dsa-fips204-experimental", "riscv-pmp-ble-monitor-bond-storage"]
+riscv-pmp-ble-monitor-ml-dsa-layout = ["riscv-pmp-large-machine-stack"]
+riscv-pmp-large-machine-stack = []
+riscv-pmp-ble-monitor-dma-policy = ["riscv-pmp-ble-monitor-handoff-only"]
+riscv-pmp-ble-monitor-dma-irq = ["riscv-pmp-ble-monitor-dma-policy"]
+riscv-pmp-ble-monitor-pin-uv-dma-policy = ["riscv-pmp-ble-monitor-pin-uv", "riscv-pmp-ble-monitor-dma-policy"]
+riscv-pmp-ble-monitor-pin-uv-dma-irq = ["riscv-pmp-ble-monitor-pin-uv", "riscv-pmp-ble-monitor-dma-irq"]
+riscv-pmp-ble-user-image = ["dep:cyw43-riscv", "dep:pio"]
+riscv-pmp-ble-user-runner-runtime = ["riscv-pmp-ble-user-image", "dep:cyw43-firmware-riscv", "dep:embassy-time", "dep:embassy-time-driver", "cyw43-riscv/bluetooth", "cyw43-firmware-riscv/bluetooth", "cyw43-firmware-riscv/wifi"]
+riscv-pmp-ble-user-dma-backend = ["riscv-pmp-ble-user-runner-runtime"]
+riscv-pmp-ble-user-dma-irq-backend = ["riscv-pmp-ble-user-dma-backend", "riscv-pmp-ble-user-timer-runtime"]
+riscv-pmp-ble-user-hci-runtime = ["riscv-pmp-ble-user-runner-runtime", "dep:embassy-futures"]
+riscv-pmp-ble-user-single-hart-critical-section = ["dep:critical-section"]
+riscv-pmp-ble-user-advertise-runtime = ["riscv-pmp-ble-user-hci-runtime", "riscv-pmp-ble-user-single-hart-critical-section", "dep:trouble-host", "trouble-host/default-packet-pool-mtu-128"]
+riscv-pmp-ble-user-timer-runtime = ["riscv-pmp-ble-user-advertise-runtime", "dep:embassy-time-queue-utils"]
+riscv-pmp-ble-user-gatt-runtime = ["riscv-pmp-ble-user-timer-runtime", "dep:heapless", "trouble-host/derive", "trouble-host/gatt"]
+riscv-pmp-ble-user-fido-runtime = ["riscv-pmp-ble-user-gatt-runtime", "manekey/riscv-ecall-backend"]
+riscv-pmp-ble-user-security = ["riscv-pmp-ble-user-fido-runtime", "trouble-host/central", "trouble-host/security"]
+riscv-pmp-ble-user-persistent-security = ["riscv-pmp-ble-user-security"]
+riscv-pmp-ble-user-bonded-only = ["riscv-pmp-ble-user-persistent-security"]
+riscv-pmp-ble-user-fido-ml-dsa-experimental = ["riscv-pmp-ble-user-fido-runtime", "experimental-large-message-buffers"]
+riscv-pmp-ble-user-multi-transport-ml-dsa-experimental = ["riscv-pmp-ble-user-fido-ml-dsa-experimental", "dep:rp235x-pac"]
+riscv-pmp-ble-user-ccid = ["riscv-pmp-ble-user-multi-transport-ml-dsa-experimental", "manekey/usb-device-transport"]
+riscv-pmp-ble-user-frontend-io = ["riscv-pmp-ble-user-ccid", "riscv-pmp-ble-user-persistent-security"]
+riscv-pmp-ble-user-multi-transport-persistent-security-ml-dsa-experimental = ["riscv-pmp-ble-user-multi-transport-ml-dsa-experimental", "riscv-pmp-ble-user-persistent-security"]
+riscv-pmp-usb-frontend = ["riscv-pmp-runtime", "manekey/riscv-ecall-backend"]
+riscv-pmp-fido = ["riscv-pmp-usb-frontend", "riscv-pmp-trusted-trng"]
+riscv-pmp-trusted-flash-storage = []
+riscv-pmp-trusted-trng = []
+riscv-pmp-trusted-gpio15-presence = []
+riscv-pmp-trusted-bootsel-presence = ["riscv-bootsel-presence"]
+riscv-pmp-board-ui-experimental = []
+riscv-pmp-trusted-ml-dsa-fips204-experimental = ["experimental-large-message-buffers", "experimental-ml-dsa-fips204"]
+riscv-pmp-trusted-pin-uv = ["riscv-pmp-trusted-flash-storage", "riscv-pmp-trusted-trng"]
+riscv-pmp-fido-flash-storage = ["riscv-pmp-fido", "riscv-pmp-trusted-flash-storage"]
+riscv-pmp-usb-pin-uv-bootsel = ["riscv-pmp-fido", "riscv-pmp-trusted-pin-uv", "riscv-pmp-trusted-bootsel-presence"]
+riscv-pmp-usb-pin-uv-bootsel-ml-dsa-fips204-experimental = ["riscv-pmp-fido", "riscv-pmp-large-machine-stack", "riscv-pmp-monolithic-large-message-layout", "riscv-pmp-trusted-pin-uv", "riscv-pmp-trusted-bootsel-presence", "riscv-pmp-trusted-ml-dsa-fips204-experimental"]
+riscv-pmp-monolithic-large-message-layout = []
+riscv-pmp-usb-internal-ccid = ["riscv-pmp-usb-pin-uv-bootsel-ml-dsa-fips204-experimental", "manekey/usb-device-transport"]
+riscv-pmp-sha256-accelerator = ["riscv-pmp-fido"]
+
+[build-dependencies.sha2]
+version = "0.11"
+default-features = false
+
+[dependencies]
+embedded-hal = "1"
+embedded-hal-nb = "1"
+static_cell = "2"
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+
+[dependencies.zeroize]
+version = "1"
+default-features = false
+
+[dependencies.manekey-fips204-scratch]
+path = "../../crates/crypto/fips204-scratch"
+default-features = false
+features = ["ml-dsa-44"]
+optional = true
+
+[dependencies.trusted-boundary]
+path = "../../crates/trusted-boundary"
+optional = true
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies]
+cortex-m = "0.7"
+cortex-m-rt = "0.7"
+defmt = "1"
+defmt-rtt = "1"
+embedded-io-async = "0.7"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["executor-thread", "platform-cortex-m"]
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-rp]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+default-features = false
+features = ["critical-section-impl", "time-driver"]
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-usb]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embedded-alloc]
+version = "0.7"
+default-features = false
+features = ["llff"]
+optional = true
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.heapless]
+version = "0.9"
+default-features = false
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.panic-probe]
+version = "1"
+features = ["print-defmt"]
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.rp-pac]
+git = "https://github.com/embassy-rs/rp-pac"
+rev = "c2e27609b021c444f634673155318977d7f0bdf6"
+default-features = false
+optional = true
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.cyw43]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+default-features = false
+optional = true
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.cyw43-firmware]
+version = "0.1"
+default-features = false
+optional = true
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.cyw43-pio]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+default-features = false
+optional = true
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.trouble-host]
+version = "0.7"
+default-features = false
+features = ["derive", "gatt", "peripheral"]
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies]
+panic-halt = "1"
+usb-device = "0.3"
+usbd-hid = "0.10"
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.critical-section]
+version = "1"
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.cyw43-riscv]
+package = "cyw43"
+path = "../../vendor/cyw43-portable"
+default-features = false
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.cyw43-firmware-riscv]
+package = "cyw43-firmware"
+version = "0.1"
+default-features = false
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["executor-thread", "platform-riscv32"]
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-time-driver]
+version = "0.2.2"
+features = ["tick-hz-1_000_000"]
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-time-queue-utils]
+version = "0.3.2"
+features = ["generic-queue-8"]
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.heapless]
+version = "0.9"
+default-features = false
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.pio]
+version = "0.3"
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.rp235x-hal]
+version = "0.4"
+default-features = false
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.rp235x-pac]
+version = "0.2"
+optional = true
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.trouble-host]
+version = "0.7"
+default-features = false
+features = ["peripheral"]
+optional = true
+
+[[bin]]
+name = "riscv-pico-2-w-ble-fido"
+path = "src/bin/products/riscv_pico_2_w_ble_fido.rs"
+required-features = ["riscv-pico-2-w-ble-fido"]
+
+[[bin]]
+name = "riscv-pico-2-w-ble-single-task-fido"
+path = "src/bin/products/riscv_pico_2_w_ble_single_task_fido.rs"
+required-features = ["riscv-pico-2-w-ble-single-task-fido"]
+
+[[bin]]
+name = "riscv-pico-2-w-ble-dual-core-fido"
+path = "src/bin/products/riscv_pico_2_w_ble_dual_core_fido.rs"
+required-features = ["riscv-pico-2-w-ble-dual-core-fido"]
+
+[[bin]]
+name = "riscv-single-core"
+path = "src/bin/products/riscv_single_core.rs"
+required-features = ["riscv-single-core"]
+
+[[bin]]
+name = "riscv-dual-core-fido"
+path = "src/bin/products/riscv_dual_core_fido.rs"
+required-features = ["riscv-dual-core-runtime"]
+
+[[bin]]
+name = "riscv-pmp-product"
+path = "src/bin/products/pmp/pmp_product.rs"
+required-features = ["riscv-pmp-runtime"]
+
+[[bin]]
+name = "riscv-pmp-ble-user"
+path = "src/bin/products/pmp/pmp_ble_user_image.rs"
+required-features = ["riscv-pmp-ble-user-image"]
+
+[[bin]]
+name = "riscv-pmp-fido"
+path = "src/bin/products/pmp/pmp_fido.rs"
+required-features = ["riscv-pmp-fido"]
+
+[[bin]]
+name = "rp2040-mpu-internal"
+path = "src/bin/products/rp2040_mpu_internal.rs"
+required-features = ["rp2040-mpu-product"]
+
+[[bin]]
+name = "manekey"
+path = "src/bin/products/rp_usb_fido.rs"
+required-features = ["rp-usb-fido"]
+
+[[bin]]
+name = "rp-usb-ccid-fido"
+path = "src/bin/products/rp_usb_ccid_fido.rs"
+required-features = ["usb-ccid-experimental"]
+
+[[bin]]
+name = "pico-2-w-multi-transport-fido"
+path = "src/bin/products/pico_2_w_multi_transport_fido.rs"
+required-features = ["pico-2-w-multi-transport-fido"]
+
+[[bin]]
+name = "pico-w-multi-transport-fido"
+path = "src/bin/products/pico_w_multi_transport_fido.rs"
+required-features = ["pico-w-multi-transport-fido"]
+
+[[bin]]
+name = "tz-nonsecure"
+path = "src/bin/products/trustzone/tz_nonsecure.rs"
+required-features = ["trustzone-nonsecure-image"]
+
+[[bin]]
+name = "tz-nonsecure-usb-ble"
+path = "src/bin/products/trustzone/tz_nonsecure_usb_ble.rs"
+required-features = ["trustzone-usb-ble-nonsecure-experimental"]
+
+[[bin]]
+name = "tz-nonsecure-multi-transport"
+path = "src/bin/products/trustzone/tz_nonsecure_multi_transport.rs"
+required-features = ["trustzone-multi-ingress-nonsecure", "rp-internal-uart"]
+
+[[bin]]
+name = "tz-secure"
+path = "src/bin/products/trustzone/tz_secure.rs"
+required-features = ["trustzone-product-runtime"]

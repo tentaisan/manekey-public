@@ -1,0 +1,105 @@
+ManeKey Additional Permission for Designated Nordic Components
+
+The copyright holder grants an additional permission under section 7 of
+AGPL-3.0-only for the original ManeKey port code identified in Schedule A,
+permitting that code to be linked with, and the resulting combination to be
+conveyed with, only the vendor components identified in Schedule B, subject
+to compliance with their respective licenses. This permission does not
+relicense those components or grant rights in third-party code. All other
+applicable AGPL-3.0-only obligations for the covered ManeKey code and its
+modifications remain in effect.
+
+Schedule A - Covered original integration code
+
+Schedule A covers only the original ManeKey integration code authored by
+the copyright holder within ports/nrf52840 and ports/nrf54l15 in the
+identified release. It excludes third-party code and upstream-derived
+portions, vendor directories, dependencies, firmware and microcode images,
+and material retaining an earlier or separate license. The component paths
+and checksums in Schedule B identify permitted combinations; they do not
+extend this permission to other vendor components or future versions.
+
+The following SHA-256 values identify the covered source version.
+Third-party portions are excluded even within a listed file.
+
+dc297e302e47e18a7f9440fdfe62d853bcda4a2511d4c5f1d15ef952f8994730  ports/nrf52840/src/bin/products/nrf52840_ble_fido.rs
+932bbd41d9a868de6aabde8edb20c961dcedbd9fd83c71fcc452671495bac00c  ports/nrf52840/src/bin/products/nrf52840_ble_mpu_runtime.rs
+efae5803e1bf94990b4f296bb0d8e3a58bd9180d5692e897b6c1ed9cf3b54844  ports/nrf52840/src/bin/products/nrf52840_ble_multi.rs
+2bb1df5698d1583f26c671e2f39deee559982d59263de050ae5c2f2ef9f7187c  ports/nrf52840/src/bin/products/nrf52840_ble_poll_tick.rs
+f7e4dbbd3acca494aa00c26e54d8f50f1d24c760beb5914da93b0aa9c2bde547  ports/nrf52840/src/bin/products/nrf52840_ble_runtime.rs
+3651a38a8801011fe5258ac6fb1a342d8adbb925345a686630e370f0e8c87bad  ports/nrf52840/src/bin/products/nrf52840_ble_security.rs
+8d2f27ba9a64167cbee7266f864526655845c0eb0e92359dc27dff372e9a58aa  ports/nrf52840/src/bin/products/nrf52840_internal_usb_fido.rs
+1639696b162a813c548406cd6cb4cf0e03bc54943ca84663c34e8df8bfc7e87b  ports/nrf52840/src/bin/products/nrf52840_mpu_internal.rs
+f752ebf87b9674b803388dbcb8501912fcd593598c82650ba640da455468a95b  ports/nrf52840/src/bin/products/nrf52840_usb_fido.rs
+8e29aaa2e6a865921425d1c0a72c5f7cb2042945f3f65940253d18f69d6c7ad6  ports/nrf52840/src/board.rs
+65792c311b515b8c5e908139ad3d03669f8c9f7e72be20f367fabd522fde7185  ports/nrf52840/src/bond_record.rs
+bba1a91ef9624a8f8ab83bda034a33f1c094a0fd12ce9847c540f4e790c6d2ff  ports/nrf52840/src/cc310_p256_shim.c
+46c720a417b28514c912f99997780452f79e886dee5c7ec4ffc0b5f53d3f546e  ports/nrf52840/src/entropy.rs
+154f4a155091351f779f8ba42f36b82c1ad6772b728626b29d5d1f35a3620759  ports/nrf52840/src/fido.rs
+ab0f68fd9df6778900ed0570d1702662f2b8c0ec9954aa870cbe6d6adbdca228  ports/nrf52840/src/internal_uart.rs
+dba1c4a421b5596c8b29879e0d738e9ab74530b5390bc98b67b1846db8a281be  ports/nrf52840/src/key_store.rs
+54f81222d289aa77fa5fc88d7a86a174f3e927de3fa2b35b4b22de774f1c271a  ports/nrf52840/src/lib.rs
+10f22073f69071c713499287ea2e7b0914d2dafa2bd64e8dfc7eec3318f79465  ports/nrf52840/src/mpu_usb.rs
+b83c5be4cab7018be94ad161f3ba0a21164e18499d87ac51f43796b24504527a  ports/nrf52840/src/p256.rs
+5a66790c79cc3c01c9dc2e7b3da7dd4000eb0a623bf00c54602971de51c0d530  ports/nrf52840/src/presence.rs
+025928f317a72da9037685714b926e0fd31da7c0e60e9aa24adc8aa651ac8acc  ports/nrf52840/src/signature_backend.rs
+3c403afff64fb828703668dae4cdf975d80641f87bac805309d98783b3c58149  ports/nrf52840/src/storage.rs
+3591f3999bc8429e36820132507d63cf313612ed370a0ec24054b708ad20cc95  ports/nrf52840/src/token_clock.rs
+69a88c71eca3aa138d0de2bc47158306f84b5dc64f790df2606f6cb47d50100c  ports/nrf52840/src/usb_ccid.rs
+1998c672980c2decb6c52af2a1f8abdd7eab0a3280915782ff2410065aee046a  ports/nrf52840/src/usb_hid.rs
+44f811880b459983fbbdb7df0706a3c7f5cc94160494b15887e70e3d04f32cb1  ports/nrf52840/src/usb_ingress.rs
+32be82901741277df177e1e7f197b3b776cc59ad707a07941e9164017044d79f  ports/nrf54l15/src/bin/products/nrf54l15_ble_fido.rs
+57acceecef6005c01bf775bd6d8b2bb91b9b28cd9a3a036769e7ab1fa0403787  ports/nrf54l15/src/bin/products/nrf54l15_tz_uart_nonsecure_product.rs
+f516623bbf63d3a312f23aee29061efaba67801c0d7df27ffb9656635cc1a514  ports/nrf54l15/src/bin/products/nrf54l15_tz_uart_secure_product.rs
+057813f9807a53056253799c736d70857bc54e201734d973aed04595bbd37412  ports/nrf54l15/src/ble_app.rs
+fd17629697e26800de419d1e4097e4d1e6da6fbff282ea329471097853636e0b  ports/nrf54l15/src/ble_ingress.rs
+fdc9ae77220008614beabf0bd644c85e18707314af3d33f8a974cb7d530a532a  ports/nrf54l15/src/board.rs
+c674c2cf6e1fcac150b7ac2f3cb14161c497afe2d2b1109660d38c94fb8153a1  ports/nrf54l15/src/cracen_microcode.c
+eebbc7ac6267de6464f010f6b9fda2431dcfba07a2fa26def7cb62bde0bde4ff  ports/nrf54l15/src/crypto.rs
+e5ce7d6cd7445ac25bc240cd2dc9d4c60158cabeae6942c0f57b61df389a0c50  ports/nrf54l15/src/crypto_config.rs
+ad1c6587e6667b3009e3a107b6c81b3510089e765b5f5c6f0bf153db6b0ac7ad  ports/nrf54l15/src/entropy.rs
+dd3b4611536f51889a1def73559e6a27d325ade16972d746390eb7e7d3b07d88  ports/nrf54l15/src/fido.rs
+a91aa46d9ad0e3c51767691bf5c59d92b71e287adb0dae3372c7e576673d37d0  ports/nrf54l15/src/fips204_scratch_workspace.rs
+b32fd9a55b846a5c99e75a1dc47c3dd46be9fdcb6652f586e0333aa45fee9b2b  ports/nrf54l15/src/flash_key_store.rs
+8b5a93cc1de8593900dec6352761050a807178abbfeb444ea4af5707fddcb8b5  ports/nrf54l15/src/interconnect.rs
+2d95be5db78815ef51dfd880c792294e019fa828ccd280e6f6ff6ff90aef54b3  ports/nrf54l15/src/kmu.rs
+f16bbe3497f8995b7b7926bd261ae8d23a61359bf4e3ab29c2f22dd2b3b5c2b5  ports/nrf54l15/src/kmu_key_store.rs
+bb40d3ec4093fb515fbcb6c6cf7f44ec07f346e0a154fcde970cc1fc876a71dc  ports/nrf54l15/src/lib.rs
+c9e144d028c4767371e359fbe87544238c4a91382ea82529b7143ef8e3c589a0  ports/nrf54l15/src/mailbox.rs
+281d728836f57480fdfad0dcd40666c77fe79d732bef0a60d019c42705c1db32  ports/nrf54l15/src/presence.rs
+e49f9b98bf47dcaaa8df11d8d5d2087f29e4ea84cce7e5c43eea242bbb4f4202  ports/nrf54l15/src/samd11_virtual_hid.rs
+26dd3c2c0225a0c43e8f9d88e62ce30a27074a18480d6f2e7d11d3d52e82ae46  ports/nrf54l15/src/storage.rs
+adcf6678e6ba40653dd7c5551079fbdd7b8b510f1ab4e3199b4afb1f0823d49f  ports/nrf54l15/src/trustzone.rs
+966dd2257ce1c2ea287fafb6b3dc35957a8017130558243e6aeb37b2358b3071  ports/nrf54l15/src/tz_uart_ns_app.rs
+ce7fa0848fb5639606490f1df196478e6e73704bdb8cca26fa2d8cf3c13067e2  ports/nrf54l15/src/tz_uart_secure_app.rs
+f4df8a547fc1f1a84cdc8a84b4bfe8b5888925004bad43dd75842b4d8bdaec18  ports/nrf54l15/src/ui.rs
+
+Schedule B - Designated components
+
+CRACEN microcode: sdk-nrf revision 01351824aaf44a6aea4f041d9a0f157e2ac8eeda
+ports/nrf54l15/vendor/nordic-cracen/microcode_binary.h
+SHA-256 36e77ca247d6672e263bbf72b2487b22ac2f706a45118f5b331d97007988454a
+
+S140 bindings: nrf-softdevice-s140 0.1.2
+Crate archive SHA-256 5ea93a1e11efdafcf914ed6b81b5be0cd99ee8ff6c3060102265ea863a355393
+S140 controller: s140_nrf52_7.3.0_softdevice.hex, version 7.3.0
+SHA-256 5f460d35efcb4ab0f280e83cd15f804e979172a3646c5b66e86af6b7b2975ba6
+The controller image is supplied separately, not included in this source tree.
+
+MPSL: nrf-mpsl-sys 0.3.0
+Crate archive SHA-256 f7e0f91bc35e6d8192106f8d2c24be600e97769024e82f1babc6b4fd5b7b8995
+SDC: nrf-sdc-sys 0.3.0
+Crate archive SHA-256 974a5010cc3a61b43e82ee6f9a2bfd80d894c8720dad08b87376f8a3048c1ecf
+Selected archives, relative to third_party/nordic/nrfxlib:
+
+a18c1b1ee7cd0c5e33d12a850613b23d2f4183001e987400e39f2467cde09f9e  mpsl/lib/nrf54l/hard-float/libmpsl.a
+ed05db68b38e5975ec29b5c43a2adb3cdc8ef96198123677d49425799871c350  mpsl/lib/nrf54l_ns/hard-float/libmpsl.a
+e6780c52ba4cd00c894b94f7dbf6802ff37e54fc4a6b8d5d9b0f670eca8f50e0  mpsl/fem/common/lib/nrf54l/hard-float/libmpsl_fem_common.a
+be467b2c6a46acf768f915efa0306f613b064e16eaef6a2d1fe8373e29ac46bc  mpsl/fem/common/lib/nrf54l_ns/hard-float/libmpsl_fem_common.a
+194858ee56650f2b13b54c593e5349a33bcf49c2628a13b0a092a275e6bb5920  softdevice_controller/lib/nrf54l/hard-float/libsoftdevice_controller_peripheral.a
+1f1f97dc38cb88ac1331ed752bcc04e48fcb83c7d3972ea283609ef851d59af2  softdevice_controller/lib/nrf54l_ns/hard-float/libsoftdevice_controller_multirole.a
+
+This permission grants no rights in Nordic components beyond their licenses.
+It does not extend to unspecified components, future component versions,
+other ports, third-party code or separately licensed material.
+It grants no separate commercial license for ManeKey code.

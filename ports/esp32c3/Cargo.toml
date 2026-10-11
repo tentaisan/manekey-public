@@ -1,0 +1,217 @@
+[package]
+edition = "2024"
+name = "esp32c3"
+version = "0.1.0"
+license = "AGPL-3.0-only"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[features]
+default = ["log-uart", "ble"]
+cred-blob = ["manekey/cred-blob"]
+ble = ["dep:embassy-executor", "dep:embassy-futures", "dep:embassy-sync", "dep:embassy-time", "dep:esp-alloc", "dep:esp-radio", "dep:esp-rtos", "dep:heapless", "dep:log", "dep:static_cell", "dep:trouble-host"]
+ble-security = ["ble", "trouble-host/log", "trouble-host/security", "shared-flash"]
+ble-bonded-only = ["ble-security"]
+ble-dual-task = ["client-pin-flash", "ble-bonded-only"]
+shared-flash = ["dep:embassy-sync", "dep:static_cell"]
+client-pin-flash = ["shared-flash"]
+internal-uart = ["client-pin-flash"]
+flash-managed-keys = ["client-pin-flash"]
+flash-managed-key-setup = ["flash-managed-keys"]
+ml-dsa-fips204-backend = ["manekey/trusted-boundary-ml-dsa-fips204-experimental"]
+experimental-ml-dsa-fips204 = ["client-pin-flash", "ml-dsa-fips204-backend"]
+ml-dsa-mldsa-native-backend = ["manekey/trusted-boundary-ml-dsa-mldsa-native-experimental"]
+experimental-ml-dsa-mldsa-native = ["client-pin-flash", "ml-dsa-mldsa-native-backend"]
+internal-uart-ml-dsa-fips204 = ["internal-uart", "ml-dsa-fips204-backend"]
+internal-uart-ml-dsa-mldsa-native = ["internal-uart", "ml-dsa-mldsa-native-backend"]
+ml-dsa-integrated-layout = ["experimental-ml-dsa-fips204"]
+ml-dsa-native-integrated-layout = ["experimental-ml-dsa-mldsa-native"]
+log-jtag-serial = ["esp-println/jtag-serial"]
+log-uart = ["esp-println/uart"]
+up-always-present = []
+
+[dependencies]
+embedded-storage = "0.3"
+nb = "1"
+
+[dependencies.embassy-executor]
+version = "0.10"
+optional = true
+
+[dependencies.embassy-futures]
+version = "0.1"
+optional = true
+
+[dependencies.embassy-sync]
+version = "0.7"
+optional = true
+
+[dependencies.embassy-time]
+version = "0.5"
+optional = true
+
+[dependencies.esp-alloc]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-alloc"
+optional = true
+
+[dependencies.esp-backtrace]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-backtrace"
+default-features = false
+features = ["esp32c3", "panic-handler", "println"]
+
+[dependencies.esp-bootloader-esp-idf]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-bootloader-esp-idf"
+default-features = false
+features = ["esp32c3"]
+
+[dependencies.esp-hal]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-hal"
+default-features = false
+features = ["esp32c3", "log-04", "rt", "unstable"]
+
+[dependencies.esp-println]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-println"
+default-features = false
+features = ["esp32c3", "log-04", "critical-section"]
+
+[dependencies.esp-radio]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-radio"
+default-features = true
+optional = true
+features = ["esp32c3", "ble", "log-04", "unstable"]
+
+[dependencies.esp-rtos]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-rtos"
+default-features = false
+optional = true
+features = ["esp32c3", "embassy", "esp-alloc", "esp-radio", "log-04"]
+
+[dependencies.esp-storage]
+git = "https://github.com/esp-rs/esp-hal"
+rev = "54c2374e"
+package = "esp-storage"
+default-features = true
+features = ["esp32c3", "bytewise-read"]
+
+[dependencies.heapless]
+version = "0.9"
+optional = true
+
+[dependencies.log]
+version = "0.4"
+optional = true
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+
+[dependencies.static_cell]
+version = "2"
+optional = true
+
+[dependencies.trouble-host]
+version = "0.7"
+optional = true
+features = ["default-packet-pool-mtu-255", "derive", "scan"]
+
+[profile.dev]
+codegen-units = 1
+debug = 2
+debug-assertions = true
+incremental = false
+opt-level = 2
+overflow-checks = true
+panic = "abort"
+
+[profile.dev.package.esp-radio]
+opt-level = 3
+
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+lto = "fat"
+opt-level = 3
+overflow-checks = false
+panic = "abort"
+
+[patch.crates-io.embassy-embedded-hal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor-macros]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-hal-internal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-queue-utils]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[[bin]]
+name = "esp32c3_ble_fido"
+path = "src/bin/products/esp32c3_ble_fido.rs"
+required-features = ["ble"]
+
+[[bin]]
+name = "esp32c3_ble_secure_fido"
+path = "src/bin/products/esp32c3_ble_secure_fido.rs"
+required-features = ["client-pin-flash"]
+
+[[bin]]
+name = "esp32c3_ble_dual_task_fido"
+path = "src/bin/products/esp32c3_ble_dual_task_fido.rs"
+required-features = ["ble"]
+
+[[bin]]
+name = "esp32c3_internal_uart_fido"
+path = "src/bin/products/esp32c3_internal_uart_fido.rs"
+required-features = ["internal-uart"]
+
+[[bin]]
+name = "esp32c3_ble_internal_uart_fido"
+path = "src/bin/products/esp32c3_ble_internal_uart_fido.rs"
+required-features = ["internal-uart", "ble-bonded-only"]
+
+[workspace]

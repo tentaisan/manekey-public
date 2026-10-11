@@ -1,0 +1,113 @@
+[package]
+name = "manekey-stm32u575"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[dependencies]
+cortex-m-rt = "0.7.5"
+static_cell = "2"
+critical-section = "1"
+
+[dependencies.cortex-m]
+version = "0.7.7"
+features = ["critical-section-single-core"]
+
+[dependencies.embassy-stm32]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["stm32u575zi", "unstable-pac", "exti"]
+
+[dependencies.embassy-usb-synopsys-otg]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[dependencies.embassy-usb-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[dependencies.embassy-time-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[dependencies.embassy-time-queue-utils]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[dependencies.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["platform-cortex-m", "executor-thread"]
+
+[dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+features = ["tick-hz-32_768"]
+
+[dependencies.embassy-usb]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[dependencies.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+features = ["embassy-usb-transport", "up-always-present", "key-storage-derived", "pin-storage-volatile"]
+
+[features]
+default = ["usb-ccid", "internal-uart", "hal-time"]
+hal-time = ["embassy-stm32/time-driver-any"]
+usb-ccid = []
+internal-uart = []
+dual-task = []
+physical-up = []
+hardware-sha256 = []
+flash-managed-keys = []
+flash-managed-key-setup = ["flash-managed-keys"]
+trustzone-secure-layout = ["manekey/trustzone-secure-layout", "cortex-m/secure-mode"]
+trustzone-secure-hal = ["trustzone-secure-layout", "embassy-stm32/trustzone-secure"]
+trustzone-nonsecure-image = ["manekey/trustzone-nonsecure-image"]
+trustzone-uart-runtime = []
+trustzone-product = ["trustzone-uart-runtime", "manekey/experimental-large-message-buffers"]
+trustzone-usb = ["trustzone-product", "dep:embassy-usb-synopsys-otg", "dep:embassy-usb-driver", "dep:embassy-time-driver", "dep:embassy-time-queue-utils"]
+experimental-ml-dsa-fips204 = ["manekey/trusted-boundary-ml-dsa-fips204-experimental"]
+experimental-ml-dsa-mldsa-native = ["manekey/trusted-boundary-ml-dsa-mldsa-native-experimental"]
+
+[profile.release]
+opt-level = "s"
+debug = 2
+lto = true
+codegen-units = 1
+
+[[bin]]
+name = "stm32u575_usb_fido"
+path = "src/bin/products/stm32u575_usb_fido.rs"
+
+[[bin]]
+name = "stm32u575_tz_secure_fido"
+path = "src/bin/products/stm32u575_tz_secure_fido.rs"
+required-features = ["trustzone-secure-layout", "trustzone-product"]
+
+[[bin]]
+name = "stm32u575_tz_nonsecure_fido"
+path = "src/bin/products/stm32u575_tz_nonsecure_fido.rs"
+required-features = ["trustzone-nonsecure-image", "trustzone-product"]
+
+[workspace]

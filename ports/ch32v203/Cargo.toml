@@ -1,0 +1,124 @@
+[package]
+name = "manekey-ch32v203"
+version = "0.1.0"
+edition = "2024"
+license = "AGPL-3.0-only"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[features]
+default = ["fido-p256", "experimental-adc-entropy"]
+fido-p256 = []
+up-gpio-pa0 = []
+experimental-low-flash = []
+flash-storage = []
+flash-managed-keys = ["flash-storage", "storage-small", "fido-p256", "client-pin-flash"]
+flash-managed-key-setup = ["flash-managed-keys"]
+dual-task = []
+experimental-adc-entropy = []
+internal-uart = []
+uart-only = []
+usb-ccid = []
+storage-small = ["manekey/storage-page-1k"]
+client-pin-volatile = []
+client-pin-flash = ["flash-storage"]
+cred-blob = ["manekey/cred-blob"]
+
+[dependencies]
+embassy-futures = "0.1.2"
+embassy-time = "0.5.0"
+embassy-usb = "0.6"
+embassy-usb-driver = "0.2.2"
+panic-halt = "1.0"
+qingke-rt = "0.7"
+critical-section = "1.2"
+
+[dependencies.ch32-hal]
+git = "https://github.com/ch32-rs/ch32-hal"
+rev = "07663312c9da6b9962e8699a917c623bc833972e"
+default-features = false
+features = ["ch32v203k8t6", "memory-x", "embassy", "rt", "time-driver-tim2"]
+
+[dependencies.embassy-executor]
+version = "0.10.0"
+features = ["platform-spin", "executor-thread"]
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+features = ["ctaphid-small-message-buffers", "trusted-no-private-request-copy", "embassy-usb-transport"]
+
+[dependencies.portable-atomic]
+version = "1"
+features = ["critical-section"]
+
+[profile.release]
+codegen-units = 1
+debug = false
+incremental = false
+strip = false
+lto = true
+opt-level = "z"
+panic = "abort"
+
+[patch.crates-io.embassy-embedded-hal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor-macros]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-hal-internal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-net-driver-channel]
+git = "https://github.com/embassy-rs/embassy"
+rev = "9b4c72a38d3d56e1fbad6161f4a8c376ea38079b"
+
+[patch.crates-io.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-queue-utils]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-usb]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-usb-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[[bin]]
+name = "ch32v203_usb_fido"
+path = "src/bin/products/ch32v203_usb_fido.rs"
+
+[[bin]]
+name = "ch32v203_multi_fido"
+path = "src/bin/products/ch32v203_multi_fido.rs"
+required-features = ["experimental-adc-entropy", "internal-uart"]
+
+[workspace]

@@ -1,0 +1,38 @@
+License scope
+
+Original ManeKey port integration is licensed under AGPL-3.0-only.
+Separate commercial permission may be obtained from the relevant rights holder
+for original code. No such permission is granted by this notice.
+
+Upstream-derived code, vendor materials and dependencies retain their own
+licenses and copyright notices. The port package license does not relicense
+those materials or grant additional rights over MCU SDK or other dependencies.
+
+Permissions already granted under earlier licenses are not revoked.
+The choice of AGPL-3.0-only does not grant use under future AGPL versions.
+
+HAL and PAC dependencies
+
+The selected ra-hal 0.3.1 and ra-metapac 0.3.2 packages declare
+LGPL-3.0-or-later. They are external Cargo dependencies, not relicensed by
+this port. Separate commercial permission for original ManeKey code does
+not replace the applicable conditions for these third-party dependencies.
+
+Data Flash Adapter References
+
+src/data_flash.rs references controller sequencing from Renesas FSP
+ra/fsp/src/r_flash_lp/r_flash_lp.c at revision
+6e2675336b37fbd805f0c01d5134adfdab4bf294.
+Copyright (c) 2020 - 2026 Renesas Electronics Corporation and/or its affiliates.
+BSD-3-Clause conditions and disclaimer are retained in
+vendor/renesas-sce5/LICENSE.md, section "BSD 3-Clause License".
+
+Register widths and offsets reference R7FA4M1AB.h distributed in Seeed
+ArduinoCore-renesas 1.2.0 under variants/XIAORA4M1/includes/ra/fsp/src/bsp/
+cmsis/Device/RENESAS/Include/.
+Copyright (c) 2009-2019 ARM Limited. All rights reserved.
+Apache-2.0 license text is retained at ../../LICENSE-APACHE-2.0.
+
+The adapter is a simplified Rust Data Flash-only interface with bounded polling,
+range/error checks and cleanup, not a redistribution of the whole SDK or driver.
+These third-party terms are not replaced by the original port's license.

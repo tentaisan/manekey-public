@@ -1,0 +1,328 @@
+[package]
+edition = "2024"
+name = "manekey"
+version = "0.1.0"
+license = "Apache-2.0"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[workspace]
+exclude = ["ports/ch32v203", "ports/esp32", "ports/esp32c3", "ports/esp32c5", "ports/esp32c6", "ports/esp32s3", "ports/esp32s2", "ports/nrf52840", "ports/nrf54l15", "ports/stm32u575", "ports/stm32f411", "ports/ra4m1", "ports/linux-uhid", "ports/wasm"]
+members = ["crates/crypto/fips204-scratch", "crates/crypto/mldsa-native", "crates/interconnect", "crates/peripherals/samd11-bridge", "crates/trusted-boundary", "ports/rp"]
+resolver = "3"
+
+[lib]
+crate-type = ["rlib"]
+doctest = false
+
+[dependencies]
+portable-atomic = "1"
+
+[dependencies.aes]
+version = "0.9"
+default-features = false
+
+[dependencies.aes-kw]
+version = "0.3.1"
+default-features = false
+optional = true
+
+[dependencies.cbc]
+version = "0.2"
+default-features = false
+features = ["block-padding"]
+
+[dependencies.defmt]
+version = "1"
+optional = true
+
+[dependencies.hmac]
+version = "0.13"
+default-features = false
+
+[dependencies.hkdf]
+version = "0.13"
+default-features = false
+
+[dependencies.sha2]
+version = "0.11"
+default-features = false
+
+[dependencies.subtle]
+version = "2.6"
+default-features = false
+
+[dependencies.p256]
+version = "0.14"
+default-features = false
+features = ["ecdsa", "arithmetic", "ecdh"]
+
+[dependencies.ml-dsa]
+version = "0.1.1"
+default-features = false
+features = ["zeroize"]
+optional = true
+
+[dependencies.fips204]
+version = "0.4.6"
+default-features = false
+features = ["ml-dsa-44"]
+optional = true
+
+[dependencies.manekey-fips204-scratch]
+path = "crates/crypto/fips204-scratch"
+default-features = false
+features = ["ml-dsa-44"]
+optional = true
+
+[dependencies.manekey-mldsa-native]
+path = "crates/crypto/mldsa-native"
+optional = true
+
+[dependencies.embedded-alloc]
+version = "0.7"
+default-features = false
+features = ["llff"]
+optional = true
+
+[dependencies.zeroize]
+version = "1"
+default-features = false
+
+[dependencies.trusted-boundary]
+path = "crates/trusted-boundary"
+
+[dependencies.manekey-interconnect]
+path = "crates/interconnect"
+
+[dependencies.manekey-samd11-bridge]
+path = "crates/peripherals/samd11-bridge"
+
+[dependencies.heapless]
+version = "0.9"
+default-features = false
+
+[dependencies.embassy-usb]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+optional = true
+
+[dependencies.static_cell]
+version = "2"
+optional = true
+
+[dependencies.critical-section]
+version = "1.2"
+optional = true
+
+[dependencies.usb-device]
+version = "0.3.2"
+optional = true
+
+[features]
+default = ["chip-rp2040", "up-gpio15", "key-storage-flash", "defmt-log"]
+defmt-log = ["dep:defmt"]
+std = []
+usb-device-transport = ["dep:usb-device"]
+embassy-usb-transport = ["dep:embassy-usb"]
+privileged-usb-pump = ["embassy-usb-transport", "dep:embassy-time", "dep:embassy-futures", "dep:static_cell", "dep:critical-section"]
+arm-m-frontend = []
+arm-m-thread-once = []
+arm-m-maintenance = []
+privileged-usb-ccid = ["privileged-usb-pump", "arm-m-frontend"]
+privileged-ble-frontend = ["privileged-usb-ccid"]
+chip-rp2040 = ["embassy-usb-transport", "portable-atomic/critical-section"]
+chip-rp235xa = ["embassy-usb-transport", "portable-atomic/critical-section"]
+chip-rp235xa-nonsecure = ["embassy-usb-transport"]
+up-gpio15 = []
+up-always-present = []
+up-bootsel-experimental = []
+board-ui-experimental = []
+key-storage-flash = []
+key-storage-derived = []
+pin-storage-flash = []
+pin-storage-volatile = []
+storage-page-1k = []
+uv-always-verified = []
+hmac-secret = []
+experimental-ml-dsa-algorithm = []
+experimental-ml-dsa-rustcrypto = ["experimental-ml-dsa-algorithm", "dep:ml-dsa"]
+experimental-ml-dsa-fips204 = ["experimental-ml-dsa-algorithm", "dep:fips204"]
+experimental-ml-dsa-fips204-scratch = ["experimental-ml-dsa-algorithm", "dep:manekey-fips204-scratch"]
+experimental-ml-dsa-mldsa-native = ["experimental-ml-dsa-algorithm", "dep:manekey-mldsa-native"]
+experimental-ml-dsa = ["experimental-ml-dsa-rustcrypto"]
+experimental-ml-dsa-alloc = ["experimental-ml-dsa-rustcrypto", "ml-dsa/alloc", "dep:embedded-alloc"]
+experimental-ml-dsa-pkcs8 = ["experimental-ml-dsa-alloc", "ml-dsa/pkcs8"]
+rp-ml-dsa-credential-experimental = ["experimental-large-message-buffers", "trusted-no-private-request-copy"]
+rp2350-ml-dsa-credential-experimental = ["rp-ml-dsa-credential-experimental"]
+rp2350-ml-dsa-experimental = ["rp2350-ml-dsa-credential-experimental", "experimental-ml-dsa-alloc"]
+rp2350-ml-dsa-fips204-experimental = ["rp2350-ml-dsa-credential-experimental", "experimental-ml-dsa-fips204"]
+trusted-boundary-ml-dsa-fips204-experimental = ["experimental-large-message-buffers", "experimental-ml-dsa-fips204"]
+trusted-boundary-ml-dsa-mldsa-native-experimental = ["experimental-large-message-buffers", "experimental-ml-dsa-mldsa-native"]
+cred-blob = []
+ctap2-no-client-pin = []
+ctaphid-small-message-buffers = []
+experimental-large-message-buffers = ["trusted-boundary/large-response"]
+key-wrap = ["dep:aes-kw"]
+trusted-no-private-request-copy = []
+trustzone-secure-layout = []
+rp2350-managed-flash-layout = []
+trustzone-nonsecure-image = []
+trustzone-handoff = ["trustzone-secure-layout"]
+dual-core-transport = []
+single-core-task-transport = []
+dual-core-core0-flash-service = ["dual-core-transport"]
+riscv-ecall-backend = []
+riscv-pmp-event-mailbox = []
+riscv-rp2350-hal = []
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies]
+cortex-m = "0.7"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"arm\", target_os = \"none\"))".dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(not(target_os = \"none\"))"]
+
+[target."cfg(all(target_arch = \"xtensa\", target_os = \"none\"))".dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"xtensa\", target_os = \"none\"))".dependencies.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"xtensa\", target_os = \"none\"))".dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[target."cfg(all(target_arch = \"riscv32\", target_os = \"none\"))".dependencies.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[profile.dev]
+codegen-units = 1
+debug = 2
+debug-assertions = true
+incremental = false
+opt-level = 3
+overflow-checks = true
+panic = "abort"
+
+[profile.dev.build-override]
+codegen-units = 8
+debug = false
+debug-assertions = false
+opt-level = 0
+overflow-checks = false
+
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+lto = "fat"
+opt-level = 3
+overflow-checks = false
+panic = "abort"
+
+[profile.release.build-override]
+codegen-units = 8
+debug = false
+debug-assertions = false
+opt-level = 0
+overflow-checks = false
+
+[profile.test]
+codegen-units = 1
+debug = 2
+debug-assertions = true
+incremental = false
+opt-level = 3
+overflow-checks = true
+
+[profile.bench]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+lto = "fat"
+opt-level = 3
+
+[patch.crates-io.embassy-embedded-hal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor-macros]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-hal-internal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-rp]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-queue-utils]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-usb]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-usb-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"

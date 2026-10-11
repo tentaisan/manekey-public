@@ -1,0 +1,216 @@
+[package]
+edition = "2024"
+name = "nrf54l15"
+version = "0.1.0"
+license = "AGPL-3.0-only"
+publish = false
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[features]
+default = ["log-cdc", "runtime", "standalone-critical-section"]
+log-cdc = []
+standalone-critical-section = ["cortex-m/critical-section-single-core"]
+trustzone-secure-layout = ["manekey/trustzone-secure-layout", "standalone-critical-section", "embassy-nrf/nrf54l15-app-s"]
+trustzone-large-layout = ["manekey/experimental-large-message-buffers"]
+trustzone-nonsecure-image = ["manekey/trustzone-nonsecure-image", "standalone-critical-section", "embassy-nrf/nrf54l15-app-ns"]
+trustzone-nonsecure-shared-image = ["manekey/trustzone-nonsecure-image", "standalone-critical-section", "embassy-nrf/nrf54l15-app-ns"]
+trustzone-secure-product = ["trustzone-secure-layout", "runtime"]
+trustzone-nonsecure-product = ["trustzone-nonsecure-shared-image"]
+trustzone-secure-uart-product = ["trustzone-secure-product"]
+trustzone-nonsecure-uart-product = ["trustzone-nonsecure-shared-image"]
+trustzone-secure-uart-user-key = ["trustzone-secure-uart-product"]
+runtime = ["embassy-nrf/gpiote", "embassy-nrf/time", "embassy-nrf/time-driver-grtc", "embassy-nrf/nrf54l15-app-s"]
+runtime-nonsecure = ["embassy-nrf/gpiote", "embassy-nrf/time", "embassy-nrf/time-driver-grtc", "embassy-nrf/nrf54l15-app-ns"]
+runtime-nonsecure-no-gpiote = ["embassy-nrf/time", "embassy-nrf/time-driver-grtc", "embassy-nrf/nrf54l15-app-ns"]
+up-always-present = ["manekey/up-always-present"]
+ble = ["runtime", "dep:nrf-mpsl", "nrf-mpsl/critical-section-impl", "nrf-mpsl/nrf54l15-app-s", "portable-atomic/critical-section", "dep:nrf-sdc", "dep:trouble-host", "nrf-sdc/nrf54l15-app-s"]
+ble-security = ["ble", "trouble-host/security", "dep:embassy-crypto", "dep:embassy-crypto-rustcrypto"]
+ble-bonded-only = ["ble-security"]
+ble-notify-pacing = ["ble"]
+nrf54l15-dual-task = ["ble"]
+cracen-sha256 = ["runtime"]
+cracen-aes256 = ["cracen-sha256"]
+cracen-p256-experimental = ["cracen-aes256", "dep:p256", "dep:cc"]
+kmu-key-store = ["cracen-p256-experimental"]
+kmu-key-setup = ["kmu-key-store"]
+flash-managed-keys = ["cracen-p256-experimental"]
+flash-managed-key-setup = ["flash-managed-keys"]
+ble-virtual-hid-experimental = ["ble"]
+experimental-ml-dsa-fips204 = ["manekey/trusted-boundary-ml-dsa-fips204-experimental"]
+experimental-ml-dsa-fips204-scratch = ["manekey/experimental-ml-dsa-fips204-scratch", "manekey/experimental-large-message-buffers", "dep:manekey-fips204-scratch"]
+experimental-ml-dsa-mldsa-native = ["manekey/experimental-ml-dsa-mldsa-native", "manekey/experimental-large-message-buffers"]
+
+[dependencies]
+cortex-m-rt = "0.7"
+critical-section = "1"
+defmt = "1"
+defmt-rtt = "1"
+embassy-futures = "0.1"
+embassy-sync = "0.8"
+embedded-storage = "0.3"
+embedded-io-async = "0.7"
+heapless = "0.9"
+static_cell = "2"
+
+[dependencies.cortex-m]
+version = "=0.7.9"
+features = ["secure-mode"]
+
+[dependencies.embassy-executor]
+version = "0.10"
+default-features = false
+features = ["platform-cortex-m", "executor-thread", "executor-interrupt", "defmt"]
+
+[dependencies.embassy-nrf]
+version = "0.11"
+default-features = false
+features = ["defmt", "rt", "unstable-pac"]
+
+[dependencies.embassy-time]
+version = "0.5"
+default-features = false
+features = ["defmt", "defmt-timestamp-uptime"]
+
+[dependencies.embassy-crypto]
+git = "https://github.com/embassy-rs/embassy.git"
+rev = "bd35bd7a7d19147c8bcae9c2eda99b25e597294c"
+optional = true
+
+[dependencies.embassy-crypto-rustcrypto]
+git = "https://github.com/embassy-rs/embassy.git"
+rev = "bd35bd7a7d19147c8bcae9c2eda99b25e597294c"
+optional = true
+features = ["embassy-crypto-aes128-ecb", "embassy-crypto-aes128-cmac", "embassy-crypto-p256-ecdh"]
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+
+[dependencies.manekey-fips204-scratch]
+path = "../../crates/crypto/fips204-scratch"
+default-features = false
+features = ["ml-dsa-44"]
+optional = true
+
+[dependencies.nrf-mpsl]
+version = "0.4"
+default-features = false
+optional = true
+features = ["defmt"]
+
+[dependencies.nrf-sdc]
+version = "0.4"
+default-features = false
+optional = true
+features = ["defmt", "peripheral"]
+
+[dependencies.panic-probe]
+version = "1"
+features = ["print-defmt"]
+
+[dependencies.portable-atomic]
+version = "1"
+default-features = false
+
+[dependencies.rand_core_06]
+package = "rand_core"
+version = "0.6"
+default-features = false
+
+[dependencies.rand_core_09]
+package = "rand_core"
+version = "0.9"
+default-features = false
+
+[dependencies.zeroize]
+version = "1"
+default-features = false
+
+[dependencies.p256]
+version = "0.14"
+default-features = false
+features = ["ecdsa"]
+optional = true
+
+[dependencies.trouble-host]
+git = "https://github.com/embassy-rs/trouble.git"
+rev = "b6043f576b482d8a4ecd7d2634df48cba20bd7ba"
+default-features = false
+optional = true
+features = ["default-packet-pool", "defmt", "derive", "gatt", "peripheral"]
+
+[build-dependencies.cc]
+version = "1"
+optional = true
+
+[profile.dev]
+codegen-units = 1
+debug = 2
+debug-assertions = true
+incremental = false
+opt-level = 2
+overflow-checks = true
+panic = "abort"
+
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+lto = "fat"
+opt-level = 3
+overflow-checks = false
+panic = "abort"
+
+[patch.crates-io.embassy-embedded-hal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-hal-internal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-nrf]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[[bin]]
+name = "nrf54l15_ble_fido"
+path = "src/bin/products/nrf54l15_ble_fido.rs"
+required-features = ["ble"]
+
+[[bin]]
+name = "nrf54l15_tz_uart_secure_product"
+path = "src/bin/products/nrf54l15_tz_uart_secure_product.rs"
+required-features = ["trustzone-secure-uart-product"]
+
+[[bin]]
+name = "nrf54l15_tz_uart_nonsecure_product"
+path = "src/bin/products/nrf54l15_tz_uart_nonsecure_product.rs"
+required-features = ["trustzone-nonsecure-uart-product"]
+
+[workspace]

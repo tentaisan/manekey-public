@@ -1,0 +1,134 @@
+[package]
+name = "manekey-ra4m1"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+readme = false
+
+[dependencies]
+cortex-m-rt = "0.7.5"
+embassy-futures = "0.1.2"
+embassy-sync = "0.8"
+static_cell = "2"
+
+[dependencies.cortex-m]
+version = "0.7.7"
+features = ["critical-section-single-core"]
+
+[dependencies.embassy-time]
+version = "0.5.1"
+features = ["tick-hz-3_000_000"]
+
+[dependencies.embassy-executor]
+version = "0.10.0"
+features = ["platform-cortex-m", "executor-thread"]
+
+[dependencies.embassy-usb]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[dependencies.zeroize]
+version = "1"
+default-features = false
+
+[dependencies.heapless]
+version = "0.8"
+default-features = false
+optional = true
+
+[dependencies.manekey]
+path = "../.."
+default-features = false
+optional = true
+
+[dependencies.manekey-mldsa-native]
+path = "../../crates/crypto/mldsa-native"
+optional = true
+
+[dependencies.ra-hal]
+version = "=0.3.1"
+default-features = false
+features = ["ra4m1", "hoco_48mhz", "rt", "unstable-pac", "skip-osm", "time-driver-gpt0", "usb-driver"]
+
+[build-dependencies]
+cc = "1"
+
+[features]
+default = ["small-message-buffers", "board-xiao"]
+board-xiao = ["ra-hal/48qfn"]
+board-nano-r4 = ["ra-hal/64lqfp"]
+small-message-buffers = ["manekey?/ctaphid-small-message-buffers"]
+sce5-runtime = []
+sce5-aes = ["fido-product"]
+flash-managed-keys = ["fido-product"]
+flash-managed-key-setup = ["flash-managed-keys"]
+hardware-wrapped-keys = ["flash-managed-keys", "sce5-aes", "manekey/key-wrap"]
+fido-product = ["dep:manekey", "sce5-runtime", "manekey/storage-page-1k", "manekey/embassy-usb-transport"]
+internal-uart = ["fido-product"]
+usb-ccid = ["fido-product", "usb-bulk-single-buffer"]
+dual-task = ["fido-product"]
+physical-up = ["fido-product"]
+mldsa-native-experimental = ["fido-product", "manekey/trusted-boundary-ml-dsa-mldsa-native-experimental"]
+mpu-internal = ["fido-product"]
+mpu-usb-hid = ["mpu-internal", "embassy-time/generic-queue-8"]
+mpu-usb-ccid = ["mpu-usb-hid", "dep:heapless", "manekey/arm-m-frontend", "manekey/privileged-usb-ccid"]
+usb-bulk-single-buffer = ["fido-product"]
+
+[profile.release]
+opt-level = "s"
+debug = 2
+lto = true
+codegen-units = 1
+
+[patch.crates-io.embassy-executor]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-executor-macros]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-futures]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-hal-internal]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-sync]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-time-queue-utils]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[patch.crates-io.embassy-usb-driver]
+git = "https://github.com/embassy-rs/embassy"
+branch = "main"
+
+[[bin]]
+name = "ra4m1_usb_fido"
+path = "src/bin/products/ra4m1_usb_fido.rs"
+required-features = ["fido-product"]
+
+[[bin]]
+name = "ra4m1_mpu_internal"
+path = "src/bin/products/ra4m1_mpu_internal.rs"
+required-features = ["mpu-internal"]
+
+[workspace]

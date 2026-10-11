@@ -1,0 +1,27 @@
+License scope
+
+Original ManeKey port integration is licensed under AGPL-3.0-only.
+The designated original portions have the additional permission in
+../../LICENSE-NORDIC-LINKING-EXCEPTION, subject to its exact scope.
+Separate commercial permission may be obtained from the relevant rights holder
+for original code. No such permission is granted by this notice.
+
+Upstream-derived code, vendor materials and dependencies retain their own
+licenses and copyright notices. The port package license does not relicense
+those materials or grant additional rights over MCU SDK or other dependencies.
+
+Permissions already granted under earlier licenses are not revoked.
+The choice of AGPL-3.0-only does not grant use under future AGPL versions.
+
+CryptoCell SHA-256 adaptation
+
+src/crypto.rs adapts the CryptoCell SHA-256 register sequence from
+OpenSK bootloader/src/crypto_cell.rs, revision
+5e30a47bc3ea1f664c9e6845b146ce88980bddfd:
+https://github.com/google/OpenSK/blob/5e30a47bc3ea1f664c9e6845b146ce88980bddfd/bootloader/src/crypto_cell.rs
+Copyright 2019-2022 Google LLC. Apache License, Version 2.0.
+The original implementation identifies Jean-Michel Picod as its author.
+Changes include direct MMIO, bounded polling, one-shot hashing and shared
+RAM scratch. The upstream-derived portion retains Apache-2.0; original port
+integration remains within the scope above. The Apache-2.0 text is provided
+in the repository root LICENSE-APACHE-2.0.
